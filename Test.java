@@ -1,7 +1,10 @@
 import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 
+// TODO: remove force from walls, add support for edges, 
+// rating system for graphs, repair function
 
 public class Test extends Applet implements Runnable{
     
@@ -30,13 +33,18 @@ public class Test extends Applet implements Runnable{
     private static final int FRAME_RATE_MS = 1000/FRAME_RATE;
     private static final int RADIUS = 20;
     
-    private static final int NUM_NODES = 10;
+    private static final int NUM_NODES = 3;
     Point[] points = new Point[NUM_NODES];
     
-    public Test(){
+    private Graphics bufferGraphics;
+    private Image bufferImage;
+    
+    public void init(){
         for (int i=0; i<points.length; i++){
             points[i] = new Point(Math.random()*1100, Math.random()*500);
         }
+        bufferImage = createImage(getWidth(), getHeight());
+        bufferGraphics = bufferImage.getGraphics();
     }
     
     private static void drawCircle(Graphics g, double xCenter, double yCenter, int r){
@@ -45,21 +53,25 @@ public class Test extends Applet implements Runnable{
     
     public void paint(Graphics g){
         super.paint(g);
-        g.setColor(Color.BLUE);
+        bufferGraphics.clearRect(0, 0, getWidth(), getHeight());
+        bufferGraphics .setColor(Color.BLUE);
         for (int i=0; i<points.length; i++){
-            drawCircle(g, points[i].getX(), points[i].getY(), RADIUS);
+            drawCircle(bufferGraphics, points[i].getX(), points[i].getY(), RADIUS);
         }
+        g.drawImage(bufferImage, 0, 0, this);
+    }
+    
+    public void update(Graphics g){
+    	paint(g);
     }
     
     public void start() {
-        System.out.println("start");
         Thread th = new Thread(this);
         th.start();
     }
 
     @Override
     public void run() {
-        System.out.println("fda");
         while (true) {
             repaint();
             try{
