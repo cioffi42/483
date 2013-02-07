@@ -17,47 +17,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 public class InfoPanel
 {
-	public static Connection getConnection()
-	{
-	    // load the MySQL JDBC Driver
-		Connection conn = null;
-		try
-		{
-			Class.forName("com.mysql.jdbc.Driver");
-			
-			String url = "jdbc:mysql://localhost:3306/infopaneldata";
-			String usr = "root";
-			String pwd = "";
-			conn = DriverManager.getConnection(url, usr, pwd);
-			System.out.println("Connected to the database");
-
-		}
-		catch (ClassNotFoundException e)
-		{
-			System.out.print("Class not found\n");
-			System.out.print(e.getMessage());
-		}
-		catch (SQLException e)
-		{
-			System.out.print("SQLException\n");
-			e.printStackTrace();
-		}
-		
-	    // define database connection parameters
-	    return conn;
-	}
-	
-	public static String getURL(String path)
-	{
-		String filename = new InfoPanel().getClass().getClassLoader().getResource(path).toString();
-		return filename;
-	}
-	
-	private Image loadImage (String pad){
-        return Toolkit.getDefaultToolkit().getImage(getClass().getResource(pad));
-    }
-	
-	public static void main (String[] args) throws SQLException
+	public InfoPanel()
 	{
 		Connection conn = null;
 		Statement stmt = null;
@@ -89,23 +49,19 @@ public class InfoPanel
 			String path1 = rs.getString(3);
 			String path2 = rs.getString(4);
 			
-			JLabel image1 = new JLabel(new ImageIcon(path1));
-			JLabel image2 = new JLabel(new ImageIcon(path2));
-			
-			
-			JLabel label = new JLabel(desc);
-			JLabel label2 = new JLabel(desc2);
-			//label2.setHorizontalTextPosition(JLabel.CENTER);
-			//label2.setVerticalTextPosition(JLabel.BOTTOM);
-			JPanel panel = new JPanel();
-			panel.setLayout(infoLayout);
+			/*JPanel panel = new JPanel();
+			panel.setLayout(infoLayout);*/
 			
 			JTextPane text = new JTextPane(); 
+			JScrollPane scroll = new JScrollPane(text);
 			HTMLEditorKit kit = new HTMLEditorKit();
 			HTMLDocument doc = new HTMLDocument();
 			text.setEditorKit(kit);
 			text.setDocument(doc);
-			frame.add(text);
+			frame.add(scroll);
+			
+			path1 = this.getClass().getResource(path1).toString();
+			path2 = this.getClass().getResource(path2).toString();
 			
 			try {
 				kit.insertHTML(doc, doc.getLength(),
@@ -123,7 +79,7 @@ public class InfoPanel
 									"</td>" +
 								"</tr>" +
 						"</table>" +
-						"<img src='" + path2 + "' align='right'/>" +
+						"<img src='" + path2 + "' width=200 height=200 align='right'/>" +
 						"<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>"
 				, 0, 0, null);
 			} catch (BadLocationException e) {
@@ -173,8 +129,13 @@ public class InfoPanel
 			panel.add(image1);
 			panel.add(label2);
 			panel.add(image2);*/
+			scroll.validate();
 			frame.validate();
 			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 		finally
 		{ // close db resources
@@ -187,5 +148,49 @@ public class InfoPanel
 			catch (Exception e){}
 
 		}
+	}
+	public static Connection getConnection()
+	{
+	    // load the MySQL JDBC Driver
+		Connection conn = null;
+		try
+		{
+			Class.forName("com.mysql.jdbc.Driver");
+			
+			String url = "jdbc:mysql://localhost:3306/infopaneldata";
+			String usr = "root";
+			String pwd = "";
+			conn = DriverManager.getConnection(url, usr, pwd);
+			System.out.println("Connected to the database");
+
+		}
+		catch (ClassNotFoundException e)
+		{
+			System.out.print("Class not found\n");
+			System.out.print(e.getMessage());
+		}
+		catch (SQLException e)
+		{
+			System.out.print("SQLException\n");
+			e.printStackTrace();
+		}
+		
+	    // define database connection parameters
+	    return conn;
+	}
+	
+	public static String getURL(String path)
+	{
+		String filename = new InfoPanel().getClass().getClassLoader().getResource(path).toString();
+		return filename;
+	}
+	
+	private Image loadImage (String pad){
+        return Toolkit.getDefaultToolkit().getImage(getClass().getResource(pad));
+    }
+	
+	public static void main (String[] args)
+	{
+		InfoPanel info = new InfoPanel();
 	}
 }
