@@ -42,4 +42,14 @@ public class Graph
 	{
 		connections.remove(connection);
 	}
+	
+	public List<Node> getNodes()
+	{
+		return nodes;
+	}
+	
+	public List<Connection> getConnections()
+	{
+		return connections;
+	}
 }
