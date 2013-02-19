@@ -5,10 +5,10 @@ public class Rating {
     
     // TODO: should we have to do so much work just to see if nodes are connected?
     private static boolean areConnected(Graph graph, Node a, Node b){
-        Iterator<Connection> it = graph.connections.iterator();
+        Iterator<Edge> it = graph.edges.iterator();
         while (it.hasNext()){
-            Connection con = it.next();
-            if ((con.node1 == a && con.node2 == b) || (con.node1 == b && con.node2 == a)){
+            Edge edge = it.next();
+            if ((edge.node1 == a && edge.node2 == b) || (edge.node1 == b && edge.node2 == a)){
                 return true;
             }
         }
@@ -59,17 +59,17 @@ public class Rating {
             lowestDistFromWall = Math.min(wallDistX, wallDistY);
         }
         
-        // For each connection
-        Iterator<Connection> itCon = graph.connections.iterator();
+        // For each edge
+        Iterator<Edge> itCon = graph.edges.iterator();
         while (itCon.hasNext()){
             
             // check node-edge distances
-            Connection con = itCon.next();
+            Edge edge = itCon.next();
             Iterator<Node> itNode = graph.nodes.iterator();
             while (itNode.hasNext()){
                 Node node = itNode.next();
-                if (node != con.node1 && node != con.node2){
-                    double distance = MathUtils.dist(node, con);
+                if (node != edge.node1 && node != edge.node2){
+                    double distance = MathUtils.dist(node, edge);
                     if (distance < lowestNodeEdgeDistance){
                         lowestNodeEdgeDistance = distance;
                     }

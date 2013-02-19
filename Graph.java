@@ -3,24 +3,24 @@ import java.util.*;
 public class Graph 
 {
 	List<Node> nodes;
-	List<Connection> connections;
+	List<Edge> edges;
 	
 	public Graph()
 	{
 		this.nodes = new ArrayList<Node>();
-		this.connections = new ArrayList<Connection>();
+		this.edges = new ArrayList<Edge>();
 	}
 	
-	public Graph(List<Node> nodes, List<Connection> connections)
+	public Graph(List<Node> nodes, List<Edge> edges)
 	{
 		this.nodes = nodes;
-		this.connections = connections;
+		this.edges = edges;
 	}
 	
-	public Graph(Node[] nodes, Connection[] connections)
+	public Graph(Node[] nodes, Edge[] edges)
 	{
 		this.nodes = Arrays.asList(nodes);
-		this.connections = Arrays.asList(connections);
+		this.edges = Arrays.asList(edges);
 	}
 	
 	public void addNode(Node node)
@@ -28,9 +28,9 @@ public class Graph
 		nodes.add(node);
 	}
 	
-	public void addConnection(Connection connection)
+	public void addEdge(Edge edge)
 	{
-		connections.add(connection);
+		edges.add(edge);
 	}
 	
 	public void removeNode(Node node)
@@ -38,9 +38,9 @@ public class Graph
 		nodes.remove(node);
 	}
 	
-	public void removeConnection(Connection connection)
+	public void removeEdge(Edge edge)
 	{
-		connections.remove(connection);
+		edges.remove(edge);
 	}
 	
 	public List<Node> getNodes()
@@ -48,8 +48,8 @@ public class Graph
 		return nodes;
 	}
 	
-	public List<Connection> getConnections()
+	public List<Edge> getEdges()
 	{
-		return connections;
+		return edges;
 	}
 }

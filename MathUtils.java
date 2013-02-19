@@ -14,8 +14,8 @@ public class MathUtils {
         return dist(a.getCenter(), b.getCenter());
     }
     
-    public static double length(Connection con){
-        return dist(con.node1.getCenter(), con.node2.getCenter());
+    public static double length(Edge edge){
+        return dist(edge.node1.getCenter(), edge.node2.getCenter());
     }
     
     public static double slope(Point a, Point b){
@@ -42,9 +42,9 @@ public class MathUtils {
         } 
     }
     
-    public static double dist(Node node, Connection con){
-        Point con1 = con.node1.getCenter();
-        Point con2 = con.node2.getCenter();
+    public static double dist(Node node, Edge edge){
+        Point con1 = edge.node1.getCenter();
+        Point con2 = edge.node2.getCenter();
         Point nodePt = node.getCenter();
         Point projection = projection(node.getCenter(), con1, con2);
         if (    projection.x > con1.x && projection.x < con2.x || 

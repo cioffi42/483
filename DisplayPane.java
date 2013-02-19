@@ -9,12 +9,6 @@ public class DisplayPane extends JPanel {
     
     private static final long serialVersionUID = 1L;
     private Graph graph;
-    private Node[] nodes;
-    private Connection[] connections;
-    private Edge[] edges;
-    private Point point;
-    private Item item;
-    private static final int NUM_NODES = 5;
     private static final int RADIUS = 20;
     private static final Color DEFAULT_NODE_COLOR = Color.BLUE;
     private static final Color FOCUS_NODE_COLOR = Color.GREEN;
@@ -22,6 +16,7 @@ public class DisplayPane extends JPanel {
     private Graphics bufferGraphics;
     private Image bufferImage;
     
+    /*
     public void init(){
         nodes = new Node[NUM_NODES];
     	connections = new Connection[NUM_NODES];
@@ -40,20 +35,23 @@ public class DisplayPane extends JPanel {
         //bufferImage = createImage(getWidth(), getHeight());
         //bufferGraphics = bufferImage.getGraphics();
     }
+    */
     
     public void paint(Graphics g){
         super.paint(g);
         g.setColor(DEFAULT_NODE_COLOR);
         
-        drawGraph(g, graph);
+        if (graph != null){
+            drawGraph(g, graph);
+        }
     }
     
     public void drawGraph(Graphics g, Graph graph)
     {
     	List<Node> nodeList;
-    	List<Connection> connectionList;
+    	List<Edge> edgeList;
     	Node node;
-    	Connection connection;
+    	Edge edge;
     	
     	//Display Graph nodes
         nodeList = graph.getNodes();
@@ -63,12 +61,12 @@ public class DisplayPane extends JPanel {
         	drawCircle(g, node.getCenter().getX(), node.getCenter().getY(), RADIUS);
         }
         //Display Graph connections
-        connectionList = graph.getConnections();
-        for (int i = 0; i < connectionList.size(); i++)
+        edgeList = graph.getEdges();
+        for (int i = 0; i < edgeList.size(); i++)
         {
-        	connection = connectionList.get(i);
-        	g.drawLine((int)connection.getFirstNode().getCenter().getX(), (int)connection.getFirstNode().getCenter().getY(),
-        			(int)connection.getSecondNode().getCenter().getX(), (int)connection.getSecondNode().getCenter().getY());
+        	edge = edgeList.get(i);
+        	g.drawLine((int)edge.node1.getCenter().getX(), (int)edge.node1.getCenter().getY(),
+        			(int)edge.node2.getCenter().getX(), (int)edge.node2.getCenter().getY());
         }
         //g.drawImage(bufferImage, 0, 0, this);
     }

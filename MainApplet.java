@@ -15,7 +15,8 @@ public class MainApplet extends JApplet {
     public static DisplayPane displayPane;
     public static InfoPane infoPane;
     
-    public void init(){
+    @Override
+    public void start(){
         displayPane = new DisplayPane();
         infoPane = new InfoPane();
         
