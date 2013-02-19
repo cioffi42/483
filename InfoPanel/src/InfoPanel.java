@@ -3,6 +3,9 @@ import java.util.Properties;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.*;
 
 import javax.swing.*;
@@ -15,8 +18,12 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
-public class InfoPanel
+public class InfoPanel extends JFrame
 {
+	
+	JTextField   _fileNameTF  = new JTextField(15);
+    JFileChooser _fileChooser = new JFileChooser();
+    
 	public InfoPanel()
 	{
 		Connection conn = null;
@@ -26,10 +33,96 @@ public class InfoPanel
 		
 		GridLayout infoLayout = new GridLayout(0,1);
 		
-		JFrame frame = new JFrame("Info Panel");
-		frame.setVisible(true);
-		frame.setSize(500,500);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//JFrame frame = new JFrame("Info Panel");
+		this.setVisible(true);
+		this.setTitle("Info Panel");
+		this.setSize(500,500);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		//-------menu----------------------------------------
+		//Where the GUI is created:
+		JMenuBar menuBar;
+		JMenu menu, submenu;
+		JMenuItem menuItem;
+		JRadioButtonMenuItem rbMenuItem;
+		JCheckBoxMenuItem cbMenuItem;
+
+		//Create the menu bar.
+		menuBar = new JMenuBar();
+
+		//Build the first menu.
+		menu = new JMenu("File");
+		menu.setMnemonic(KeyEvent.VK_F);
+		//menu.getAccessibleContext().setAccessibleDescription(
+		//        "The only menu in this program that has menu items");
+		menuBar.add(menu);
+
+		//a group of JMenuItems
+		menuItem = new JMenuItem("Open File...",
+		                         KeyEvent.VK_O);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		//menuItem.getAccessibleContext().setAccessibleDescription(
+		//        "This doesn't really do anything");
+		menuItem.addActionListener(new OpenAction());
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem("Both text and icon",
+		                         new ImageIcon("images/middle.gif"));
+		menuItem.setMnemonic(KeyEvent.VK_B);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(new ImageIcon("images/middle.gif"));
+		menuItem.setMnemonic(KeyEvent.VK_D);
+		menu.add(menuItem);
+
+		//a group of radio button menu items
+		menu.addSeparator();
+		ButtonGroup group = new ButtonGroup();
+		rbMenuItem = new JRadioButtonMenuItem("A radio button menu item");
+		rbMenuItem.setSelected(true);
+		rbMenuItem.setMnemonic(KeyEvent.VK_R);
+		group.add(rbMenuItem);
+		menu.add(rbMenuItem);
+
+		rbMenuItem = new JRadioButtonMenuItem("Another one");
+		rbMenuItem.setMnemonic(KeyEvent.VK_O);
+		group.add(rbMenuItem);
+		menu.add(rbMenuItem);
+
+		//a group of check box menu items
+		menu.addSeparator();
+		cbMenuItem = new JCheckBoxMenuItem("A check box menu item");
+		cbMenuItem.setMnemonic(KeyEvent.VK_C);
+		menu.add(cbMenuItem);
+
+		cbMenuItem = new JCheckBoxMenuItem("Another one");
+		cbMenuItem.setMnemonic(KeyEvent.VK_H);
+		menu.add(cbMenuItem);
+
+		//a submenu
+		menu.addSeparator();
+		submenu = new JMenu("A submenu");
+		submenu.setMnemonic(KeyEvent.VK_S);
+
+		menuItem = new JMenuItem("An item in the submenu");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_2, ActionEvent.ALT_MASK));
+		submenu.add(menuItem);
+
+		menuItem = new JMenuItem("Another item");
+		submenu.add(menuItem);
+		menu.add(submenu);
+
+		//Build second menu in the menu bar.
+		menu = new JMenu("Another Menu");
+		menu.setMnemonic(KeyEvent.VK_N);
+		menu.getAccessibleContext().setAccessibleDescription(
+		        "This menu does nothing");
+		menuBar.add(menu);
+
+		this.setJMenuBar(menuBar);
+		//-------end menu------------------------------------
 		
 		try
 		{
@@ -58,7 +151,7 @@ public class InfoPanel
 			HTMLDocument doc = new HTMLDocument();
 			text.setEditorKit(kit);
 			text.setDocument(doc);
-			frame.add(scroll);
+			this.add(scroll);
 			
 			path1 = this.getClass().getResource(path1).toString();
 			path2 = this.getClass().getResource(path2).toString();
@@ -124,13 +217,13 @@ public class InfoPanel
 			
 			
 		/*	JScrollPane scroll = new JScrollPane(panel);
-			frame.add(scroll);
+			this.add(scroll);
 			panel.add(label);
 			panel.add(image1);
 			panel.add(label2);
 			panel.add(image2);*/
 			scroll.validate();
-			frame.validate();
+			this.validate();
 			
 		}
 		catch (Exception e)
@@ -189,8 +282,26 @@ public class InfoPanel
         return Toolkit.getDefaultToolkit().getImage(getClass().getResource(pad));
     }
 	
+	class OpenAction implements ActionListener
+	{
+		public void actionPerformed(ActionEvent ae)
+		{
+            //... Open a file dialog.
+            int retval = _fileChooser.showOpenDialog(InfoPanel.this);
+            if (retval == JFileChooser.APPROVE_OPTION)
+            {
+                //... The user selected a file, get it, use it.
+                File file = _fileChooser.getSelectedFile();
+
+                //... Update user interface.
+                _fileNameTF.setText(file.getName());
+            }
+        }
+    }
+	
 	public static void main (String[] args)
 	{
-		InfoPanel info = new InfoPanel();
+		JFrame window = new InfoPanel();
+        window.setVisible(true);
 	}
 }
