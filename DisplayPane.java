@@ -9,13 +9,9 @@ public class DisplayPane extends JPanel {
     
     private static final long serialVersionUID = 1L;
     private Graph graph;
-    private Node node;
-    private Connection connection;
     private Node[] nodes;
     private Connection[] connections;
     private Edge[] edges;
-    private List<Node> nodeList;
-    private List<Connection> connectionList;
     private Point point;
     private Item item;
     private static final int NUM_NODES = 5;
@@ -46,11 +42,20 @@ public class DisplayPane extends JPanel {
     }
     
     public void paint(Graphics g){
-    	init();
         super.paint(g);
         g.setColor(DEFAULT_NODE_COLOR);
         
-        //Display Graph nodes
+        drawGraph(g, graph);
+    }
+    
+    public void drawGraph(Graphics g, Graph graph)
+    {
+    	List<Node> nodeList;
+    	List<Connection> connectionList;
+    	Node node;
+    	Connection connection;
+    	
+    	//Display Graph nodes
         nodeList = graph.getNodes();
         for (int i = 0; i < nodeList.size(); i++)
         {
@@ -66,6 +71,10 @@ public class DisplayPane extends JPanel {
         			(int)connection.getSecondNode().getCenter().getX(), (int)connection.getSecondNode().getCenter().getY());
         }
         //g.drawImage(bufferImage, 0, 0, this);
+    }
+    
+    public void setGraph(Graph graph){
+    	this.graph = graph;
     }
     
     private static void drawCircle(Graphics g, double xCenter, double yCenter, int r){

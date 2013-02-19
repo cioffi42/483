@@ -4,6 +4,10 @@ public class Item
 	String name;
 	String description;
 	
+	public Item(){
+	    this.id = this.name = this.description = null;
+	}
+	
 	public Item(String id, String name, String description)
 	{
 		this.id = id;
