@@ -1,7 +1,5 @@
-import java.util.Iterator;
 
-
-public class AmuTestCode {
+public class TestCode {
     private static Node[] nodes;
     
     // Make Edge
@@ -17,14 +15,13 @@ public class AmuTestCode {
         Graph graph = Spectral.createGraph(nodes, edges);
         
         MainApplet.displayPane.setGraph(graph);
-        Rating.rateGraph(graph);
+        new Rating(graph).print();
         printGraph(graph);
     }
     
     public static void printGraph(Graph graph){
-        Iterator<Node> it = graph.nodes.iterator();
-        while (it.hasNext()){
-            Node node = it.next();
+        for (int i=0; i<graph.nodes.length; i++){
+            Node node = graph.nodes[i];
             System.out.printf("%d  %d\n", (int)node.getCenter().x, (int)node.getCenter().y);
         }
         System.out.println();

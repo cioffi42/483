@@ -16,27 +16,6 @@ public class DisplayPane extends JPanel {
     private Graphics bufferGraphics;
     private Image bufferImage;
     
-    /*
-    public void init(){
-        nodes = new Node[NUM_NODES];
-    	connections = new Connection[NUM_NODES];
-    	edges = new Edge[NUM_NODES];
-        for (int i = 0; i < NUM_NODES; i++){
-        	item = new Item("a", "b", "c");
-        	point = new Point(Math.random()*1100, Math.random()*500);
-            nodes[i] = new Node(point, item);
-            
-        }
-        for (int i = 0; i < NUM_NODES - 1; i++){
-        	connections[i] = new Connection(edges[i], nodes[i], nodes[i+1]);
-        }
-        connections[4] = new Connection(edges[4], nodes[4], nodes[0]);
-        graph = new Graph(nodes, connections);
-        //bufferImage = createImage(getWidth(), getHeight());
-        //bufferGraphics = bufferImage.getGraphics();
-    }
-    */
-    
     public void paint(Graphics g){
         super.paint(g);
         g.setColor(DEFAULT_NODE_COLOR);
@@ -48,23 +27,19 @@ public class DisplayPane extends JPanel {
     
     public void drawGraph(Graphics g, Graph graph)
     {
-    	List<Node> nodeList;
-    	List<Edge> edgeList;
     	Node node;
     	Edge edge;
     	
     	//Display Graph nodes
-        nodeList = graph.getNodes();
-        for (int i = 0; i < nodeList.size(); i++)
+        for (int i = 0; i < graph.nodes.length; i++)
         {
-        	node = nodeList.get(i);
+        	node = graph.nodes[i];
         	drawCircle(g, node.getCenter().getX(), node.getCenter().getY(), RADIUS);
         }
         //Display Graph connections
-        edgeList = graph.getEdges();
-        for (int i = 0; i < edgeList.size(); i++)
+        for (int i = 0; i < graph.edges.length; i++)
         {
-        	edge = edgeList.get(i);
+        	edge = graph.edges[i];
         	g.drawLine((int)edge.node1.getCenter().getX(), (int)edge.node1.getCenter().getY(),
         			(int)edge.node2.getCenter().getX(), (int)edge.node2.getCenter().getY());
         }

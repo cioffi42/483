@@ -33,12 +33,12 @@ public class MainApplet extends JApplet {
                 public void propertyChange(PropertyChangeEvent event) {
                     validate();
                     // This code will be executed whenever the slider moves
-                    AmuTestCode.makeTestGraph();
+                    TestCode.makeTestGraph();
                 }
             }
         );
         
         validate();
-        AmuTestCode.makeTestGraph();
+        TestCode.makeTestGraph();
     }
 }

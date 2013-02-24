@@ -2,54 +2,44 @@ import java.util.*;
 
 public class Graph 
 {
-	List<Node> nodes;
-	List<Edge> edges;
+	Node[] nodes;
+	Edge[] edges;
 	
-	public Graph()
-	{
-		this.nodes = new ArrayList<Node>();
-		this.edges = new ArrayList<Edge>();
-	}
+	public double[][] matrix;
 	
 	public Graph(List<Node> nodes, List<Edge> edges)
 	{
-		this.nodes = nodes;
-		this.edges = edges;
+	    this.nodes = nodes.toArray(this.nodes);
+	    this.edges = edges.toArray(this.edges);
+	    createJacobianMatrix();
 	}
 	
 	public Graph(Node[] nodes, Edge[] edges)
 	{
-		this.nodes = Arrays.asList(nodes);
-		this.edges = Arrays.asList(edges);
+		this.nodes = nodes;
+		this.edges = edges;
+		createJacobianMatrix();
 	}
 	
-	public void addNode(Node node)
-	{
-		nodes.add(node);
-	}
+	private static final int NOT_FOUND = -1;
 	
-	public void addEdge(Edge edge)
-	{
-		edges.add(edge);
-	}
-	
-	public void removeNode(Node node)
-	{
-		nodes.remove(node);
-	}
-	
-	public void removeEdge(Edge edge)
-	{
-		edges.remove(edge);
-	}
-	
-	public List<Node> getNodes()
-	{
-		return nodes;
-	}
-	
-	public List<Edge> getEdges()
-	{
-		return edges;
+	private void createJacobianMatrix(){
+	    matrix = new double[this.nodes.length][this.nodes.length];
+	    for (Edge edge : edges){
+            int first = NOT_FOUND;
+            int second = NOT_FOUND;
+            for (int i=0; i<this.nodes.length; i++){
+                if (nodes[i] == edge.node1){
+                    first = i;
+                } else if (nodes[i] == edge.node2){
+                    second = i;
+                }
+            }
+            if (first != NOT_FOUND && second != NOT_FOUND){
+                matrix[first][second] = matrix[second][first] = -1;
+                matrix[first][first]++;
+                matrix[second][second]++;
+            }
+        }
 	}
 }
