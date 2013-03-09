@@ -20,6 +20,7 @@ public class MainApplet extends JApplet {
         displayPane = new DisplayPane();
         infoPane = new InfoPane();
         
+        setSize(1200, 600);
         mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, displayPane, infoPane);
         mainPanel.setOneTouchExpandable(true);
         this.add(mainPanel);
