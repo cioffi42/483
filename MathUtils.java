@@ -29,9 +29,9 @@ public class MathUtils {
     public static Point projection(Point point, Point endpoint1, Point endpoint2){
         double conSlope = slope(endpoint1, endpoint2);
         if (conSlope == HORIZONTAL){
-            return new Point(endpoint1.x, point.y);
-        } else if (conSlope == VERTICAL){
             return new Point(point.x, endpoint1.y);
+        } else if (conSlope == VERTICAL){
+            return new Point(endpoint1.x, point.y);
         } else {
             double nodeSlope = -1.0 / conSlope;
             double conIntercept = (endpoint1.y - conSlope*endpoint1.x);
@@ -54,6 +54,45 @@ public class MathUtils {
             return dist(nodePt, projection);
         } else {
             return Math.min(dist(nodePt, con1), dist(nodePt, con2));
+        }
+    }
+    
+    public static double min(double...numbers){
+        double result = numbers[0];
+        for (int i=1; i<numbers.length; i++){
+            result = Math.min(result, numbers[i]);
+        }
+        return result;
+    }
+    
+    public static int argmin(double...numbers){
+        int result = 0;
+        for (int i=1; i<numbers.length; i++){
+            if (numbers[i] < numbers[result]){
+                result = i;
+            }
+        }
+        return result;
+    }
+    
+    public static double average(double...numbers){
+        double sum = 0.0;
+        for (double number : numbers){
+            sum += number;
+        }
+        return sum / numbers.length;
+    }
+    
+    public static double weight(double number, double min, double desired, boolean cap){
+        if (number < min){
+            return number/min;
+        } else if (number < desired){
+            return 1.0 + (number-min)/(desired-min);
+        } else if (cap){
+            return 2.0;
+        } else {
+            // TODO: figure out what I should return here
+            return 1.0 + (number-min)/(desired-min);
         }
     }
 }

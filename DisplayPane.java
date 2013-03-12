@@ -15,22 +15,33 @@ public class DisplayPane extends JPanel {
     
     private static final long serialVersionUID = 1L;
     private Graph graph;
-    private static final int RADIUS = 20;
     private static final Color DEFAULT_NODE_COLOR = Color.BLACK;
-    private static final Color FOCUS_NODE_COLOR = Color.GREEN;
+    private static final Color FOCUS_NODE_COLOR = Color.RED;
     private static BufferedImage image;
+    private static BufferedImage focusNodeImage;
     
     private Graphics bufferGraphics;
     private Image bufferImage;
     private static int imgHeight;
     private static int imgWidth;
     
+    private Mouse mouse;
+    private int offsetX;
+    private int offsetY;
+    
+    public Node focusNode = null;
+    
     public DisplayPane()
     {
         setBackground(Color.WHITE);
+        offsetX = offsetY = 0;
+        mouse = new Mouse();
+        addMouseListener(mouse);
+        addMouseMotionListener(mouse);
     	try
     	{
     		image = ImageIO.read(new File("NewNode.gif"));
+    		focusNodeImage = ImageIO.read(new File("SelectedNode.gif"));
     		imgHeight = image.getHeight();
     		imgWidth = image.getWidth();
     	}
@@ -60,8 +71,15 @@ public class DisplayPane extends JPanel {
         for (int i = 0; i < graph.edges.length; i++)
         {
             edge = graph.edges[i];
-        	g2.drawLine((int)edge.node1.getCenter().getX(), (int)edge.node1.getCenter().getY(),
-            		(int)edge.node2.getCenter().getX(), (int)edge.node2.getCenter().getY());
+            if (edge.node1 == focusNode || edge.node2 == focusNode){
+                g2.setColor(FOCUS_NODE_COLOR);
+            } else {
+                g2.setColor(DEFAULT_NODE_COLOR);
+            }
+        	g2.drawLine((int)edge.node1.getCenter().getX() - offsetX, 
+        	        (int)edge.node1.getCenter().getY() - offsetY,
+            		(int)edge.node2.getCenter().getX() - offsetX, 
+            		(int)edge.node2.getCenter().getY() - offsetY);
         }
         //g.drawImage(bufferImage, 0, 0, this);
         
@@ -69,7 +87,7 @@ public class DisplayPane extends JPanel {
         for (int i = 0; i < graph.nodes.length; i++)
         {
         	node = graph.nodes[i];
-        	drawCircle(g, node.getCenter().getX(), node.getCenter().getY(), RADIUS);
+        	drawCircle(g, node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY, (node == focusNode));
         }
         
     }
@@ -78,13 +96,29 @@ public class DisplayPane extends JPanel {
     	this.graph = graph;
     }
     
-    private static void drawCircle(Graphics g, double xCenter, double yCenter, int r){
+    private static void drawCircle(Graphics g, double xCenter, double yCenter, boolean isFocusNode){
         //g.fillOval((int)xCenter-r, (int)yCenter-r, 2*r, 2*r);
-        g.drawImage(image, (int)xCenter - imgWidth/2, (int)yCenter - imgHeight/2, null);
+        BufferedImage imageToDraw = isFocusNode ? focusNodeImage : image;
+        g.drawImage(imageToDraw, (int)xCenter - imgWidth/2, (int)yCenter - imgHeight/2, null);
     }
     
     public void update(Graphics g){
     	paint(g);
     }
     
+    public void changeOffset(int dx, int dy){
+        offsetX += dx;
+        offsetY += dy;
+    }
+    
+    public Node getMouseNode(int x, int y){
+        for (Node node : graph.nodes){
+            double scaledX = (x - node.getCenter().getX()) / (imgWidth/2);
+            double scaledY = (y - node.getCenter().getY()) / (imgHeight/2);
+            if (scaledX*scaledX + scaledY*scaledY <= 1.0){
+                return node;
+            }
+        }
+        return null;
+    }
 }

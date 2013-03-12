@@ -1,3 +1,5 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -13,12 +15,21 @@ public class MainApplet extends JApplet {
     
     private static JSplitPane mainPanel;
     public static DisplayPane displayPane;
-    public static InfoPane infoPane;
+    public static sidePanel sidePane;
+    public static NodeListPanel nodeListPane;
     
     @Override
-    public void start(){
+    public void init(){
         displayPane = new DisplayPane();
-        infoPane = new InfoPane();
+        JPanel infoPane = new JPanel(new BorderLayout());
+        sidePane = new sidePanel();
+        nodeListPane = new NodeListPanel();
+        
+        displayPane.setMinimumSize(new Dimension(400, 400));
+        infoPane.setMinimumSize(new Dimension(300, 400));
+        
+        infoPane.add(sidePane, BorderLayout.CENTER);
+        infoPane.add(nodeListPane, BorderLayout.SOUTH);
         
         setSize(1200, 600);
         mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, displayPane, infoPane);
