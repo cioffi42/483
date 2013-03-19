@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.*;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -88,6 +89,7 @@ public class DisplayPane extends JPanel {
         {
         	node = graph.nodes[i];
         	drawCircle(g, node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY, (node == focusNode));
+        	drawText(g, node.getName(), node.getCenter().getX(), node.getCenter().getY());
         }
         
     }
@@ -100,6 +102,43 @@ public class DisplayPane extends JPanel {
         //g.fillOval((int)xCenter-r, (int)yCenter-r, 2*r, 2*r);
         BufferedImage imageToDraw = isFocusNode ? focusNodeImage : image;
         g.drawImage(imageToDraw, (int)xCenter - imgWidth/2, (int)yCenter - imgHeight/2, null);
+    }
+    
+    //problem with text color and "red color mouse over feature"
+    //problem when using a node.getName() that is NULL, error check for this
+    //need to manage it so words don't get cut in half by a new line
+    //not centered correctly
+    private static void drawText(Graphics g, String name, double xCenter, double yCenter)
+    {
+    	name = "Insert This Node's Name Here";							//warning, it doesn't take the node's real name
+		int length = name.length();
+		int nRows = length/15 + 1;     //15 in constant here, should be variable
+		int rLength = length/nRows;
+		ArrayList<String> substrings = new ArrayList<String>();
+		int nextStartIndex=0;
+		
+		for (int i = 0; i < nRows; i++) 
+		{
+			int thisrLength = rLength;
+			String substring = new String();
+			
+			if (i == (nRows/2 + 1)) 
+				thisrLength += length % nRows;			
+			if (i != (nRows - 1)) 
+				substring = name.substring(nextStartIndex, nextStartIndex + thisrLength);
+			else substring = name.substring(nextStartIndex);
+			
+			substrings.add(substring);
+			nextStartIndex += thisrLength;
+		}
+		
+		for (int i = 0; i < nRows; i++) 
+		{
+			int rowheight = imgHeight/(nRows + 1);
+			int rowposition = (int)yCenter - imgHeight/2 + rowheight*(i + 1) + 3;				//added plus 3 for offset, possibly from font size, hater's go'n hate
+			g.drawString(substrings.get(i), (int)xCenter - (int)(length*1.6), rowposition); 	//was expecting length/2 but *1.6 did the trick o.O, what am i missing?
+																								//this will have toe change everytime we change font size
+		}   	    	
     }
     
     public void update(Graphics g){
