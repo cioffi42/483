@@ -24,6 +24,7 @@ public class MainApplet extends JApplet {
     
     @Override
     public void init(){
+        initValues();
         displayPane = new DisplayPane();
         JPanel infoPane = new JPanel(new BorderLayout());
         sidePane = new sidePanel();
@@ -55,14 +56,13 @@ public class MainApplet extends JApplet {
         );
         
         validate();
-        initValues();
         TestCode.makeTestGraph();
     }
     
     //Initializes nodes and edges with dummy values.  Used while our database is not yet working.
     public void initValues()
     {
-        int numNodes = 37;
+    	int numNodes = 37;
         
         nodes = new Node[numNodes];
         for (int i=0; i<numNodes; i++) nodes[i] = new Node();
