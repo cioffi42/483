@@ -24,7 +24,11 @@ public class NodeListPanel extends JPanel implements ListSelectionListener
     {
         super(new BorderLayout());
         
-        String[] nodearray = new String[] {"Law of blah", "Law of conservation of energy", "Luminosity", "Law of conservation of mass", "Absolute zero", "Magnetic field", "Monochromatic light", "Kinetic energy", "Atomic number", "Frequency", "Position", "Velocity", "Acceleration", "Force", "Torque"};
+        String[] nodearray = new String[MainApplet.nodes.length];
+        for (int i = 0; i < nodearray.length; i++)
+        {
+        	nodearray[i] = MainApplet.nodes[i].getName();
+        }
         Arrays.sort(nodearray);
  
         listModel = new DefaultListModel();
