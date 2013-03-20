@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.*;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -30,7 +29,11 @@ public class DisplayPane extends JPanel {
     private int offsetX;
     private int offsetY;
     
-    public Node focusNode = null;
+    //Used to determine which nodes get displayed
+    private static final int MAX_NODES = 9;
+    private static final double MIN_WEIGHT = 0.2;
+    
+    public static Node focusNode = null;
     
     public DisplayPane()
     {
@@ -59,6 +62,58 @@ public class DisplayPane extends JPanel {
         if (graph != null){
             drawGraph(g, graph);
         }
+    }
+    
+    //Returns the nodes that will be displayed with a given focus node
+    public static Node[] determineNodes(Node focus)
+    {
+    	Node[] oldNodes = MainApplet.nodes;
+    	Node[] usedNodes;
+    	Edge[] oldEdges = MainApplet.edges;
+    	List<Node> newNodes = new ArrayList<Node>();
+    	Node temp;
+    	
+    	newNodes.add(focus);
+    	for (int i = 0; i < oldEdges.length; i++)
+    	{
+    		if (oldEdges[i].hasNode(focus))
+    		{
+    			if (oldEdges[i].node1 == focus && oldEdges[i].weightAB > MIN_WEIGHT)
+    				newNodes.add(oldEdges[i].node2);
+    			else if (oldEdges[i].node2 == focus && oldEdges[i].weightBA > MIN_WEIGHT)
+    				newNodes.add(oldEdges[i].node1);
+    		}
+    		if (newNodes.size() >= MAX_NODES)
+    		{
+    			break;
+    		}
+    	}
+    	
+    	while (newNodes.size() < MAX_NODES)
+    	{
+    		for (int i = 1; i < newNodes.size() && newNodes.size() >= MAX_NODES; i++)
+    		{
+    			temp = newNodes.get(i);
+    			for (int j = 0; j < oldEdges.length; j++)
+    			{
+	    			if (oldEdges[j].hasNode(temp))
+	        		{
+	        			if (oldEdges[j].node1 == temp && oldEdges[j].weightAB > MIN_WEIGHT)
+	        				newNodes.add(oldEdges[j].node2);
+	        			else if (oldEdges[j].node2 == temp && oldEdges[j].weightBA > MIN_WEIGHT)
+	        				newNodes.add(oldEdges[j].node1);
+	        		}
+	        		if (newNodes.size() >= MAX_NODES)
+	        		{
+	        			break;
+	        		}
+    			}
+    		}
+    	}
+    	
+    	usedNodes = new Node[newNodes.size()];
+    	usedNodes = newNodes.toArray(usedNodes);
+    	return usedNodes;
     }
     
     public void drawGraph(Graphics g, Graph graph)
@@ -110,7 +165,7 @@ public class DisplayPane extends JPanel {
     //not centered correctly
     private static void drawText(Graphics g, String name, double xCenter, double yCenter)
     {
-    	name = "Insert This Node's Name Here";							//warning, it doesn't take the node's real name
+    	//name = "Insert This Node's Name Here";							//warning, it doesn't take the node's real name
 		int length = name.length();
 		int nRows = length/15 + 1;     //15 in constant here, should be variable
 		int rLength = length/nRows;
@@ -127,7 +182,7 @@ public class DisplayPane extends JPanel {
 			if (i != (nRows - 1)) 
 				substring = name.substring(nextStartIndex, nextStartIndex + thisrLength);
 			else substring = name.substring(nextStartIndex);
-			
+		
 			substrings.add(substring);
 			nextStartIndex += thisrLength;
 		}
@@ -138,9 +193,9 @@ public class DisplayPane extends JPanel {
 			int rowposition = (int)yCenter - imgHeight/2 + rowheight*(i + 1) + 3;				//added plus 3 for offset, possibly from font size, hater's go'n hate
 			g.drawString(substrings.get(i), (int)xCenter - (int)(length*1.6), rowposition); 	//was expecting length/2 but *1.6 did the trick o.O, what am i missing?
 																								//this will have toe change everytime we change font size
-		}   	    	
+    	}   	    	
     }
-    
+
     public void update(Graphics g){
     	paint(g);
     }
