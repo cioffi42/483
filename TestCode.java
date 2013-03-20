@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class TestCode {
     private static Node[] nodes;
@@ -6,7 +9,30 @@ public class TestCode {
     
     // Make Edge
     private static Edge me(int i, int j){
-        return new Edge(1.0, nodes[i], nodes[j]);
+        return new Edge(1.0, 1.0, nodes[i], nodes[j]);
+    }
+    
+    public static void testNodeDeterminer(){
+        nodes = DisplayPane.determineNodes(MainApplet.nodes[0]);
+        List<Edge> newEdges = new ArrayList<Edge>();
+        
+        for (int i = 0; i < MainApplet.edges.length; i++)
+        {
+            if (MainApplet.edges[i].includesNodes(nodes))
+        	{
+        		newEdges.add(MainApplet.edges[i]);
+        	}
+        }
+        Edge[] usedEdges = new Edge[newEdges.size()];
+    	usedEdges = newEdges.toArray(usedEdges);
+        Graph graph = Spectral.createGraph(nodes, usedEdges);
+        
+        new Rating(graph).print();
+        Repair.repair(graph);
+        new Rating(graph).print();
+        printGraph(graph);
+        
+        MainApplet.displayPane.setGraph(graph);
     }
     
     public static void makeTestGraph(){
@@ -59,7 +85,7 @@ public class TestCode {
         for (int i=0; i<numNodes; i++){
             for (int j=i+1; j<numNodes; j++){
                 if (Math.random() > 0.5){
-                    edgesFull[edgeIndex++] = new Edge(1.0, nodes[i], nodes[j]);
+                    edgesFull[edgeIndex++] = new Edge(1.0, 1.0, nodes[i], nodes[j]);
                 }
             }
         }
