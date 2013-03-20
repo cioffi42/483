@@ -56,13 +56,14 @@ public class MainApplet extends JApplet {
         );
         
         validate();
-        TestCode.makeTestGraph();
+        TestCode.testNodeDeterminer();
+        //TestCode.makeTestGraph();
     }
     
     //Initializes nodes and edges with dummy values.  Used while our database is not yet working.
     public void initValues()
     {
-    	int numNodes = 37;
+        int numNodes = 37;
         
         nodes = new Node[numNodes];
         for (int i=0; i<numNodes; i++) nodes[i] = new Node();
@@ -142,12 +143,17 @@ public class MainApplet extends JApplet {
         nodes[35].setDescription("Impulse measures the effect of a force over time on an object. For constant forces, it is defined as force times time of application. In general, it is the integral of force by time. Net impulse yields the change in momentum for an object.");
         nodes[36].setName("Inverse Square Law");
         nodes[36].setDescription("The inverse square law is the most general and fundamental description of gravitational forces encountered in Physics 211. It describes the gravitational force acting between two massive objects as a function of their masses and the distance between them. It reads, F_G = Gm_1 m_2/r^2.");
-        Edge[] newEdges = {me(0,1), me(0,2), me(0,3), me(0,4), me(0,5), me(0,6), me(0,7), me(0,8), me(0,9), me(0,10), me(0,11), me(0,12), me(0,13), me(0,14), me(1,2)};
+        Edge[] newEdges = {me(0,1), me(0,2), me(0,3), me(0,4), me(0,5), me(0,6), me(0,7), 
+				me(0,8), me(0,9), me(0,10), me(0,11), me(0,12), me(0,13), me(0,14),
+				me(0,15), me(0,16), me(0,17), me(0,18), me(0,19), me(0,20), me(0,21),
+				me(0,22), me(0,23), me(0,24), me(0,25), me(0,26), me(0,27), me(0,28),
+				me(0,29), me(0,30), me(0,31), me(0,32), me(0,33), me(0,34), me(0,35),
+				me(0,36)};
         edges = newEdges;
     }
     
     // Make Edge
     private static Edge me(int i, int j){
-        return new Edge(1.0, nodes[i], nodes[j]);
+        return new Edge(1.0, 1.0, nodes[i], nodes[j]);
     }
 }
