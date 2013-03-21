@@ -11,19 +11,19 @@ public class Graph
 	{
 	    this.nodes = nodes.toArray(this.nodes);
 	    this.edges = edges.toArray(this.edges);
-	    createJacobianMatrix();
+	    createLaplacianMatrix();
 	}
 	
 	public Graph(Node[] nodes, Edge[] edges)
 	{
 		this.nodes = nodes;
 		this.edges = edges;
-		createJacobianMatrix();
+		createLaplacianMatrix();
 	}
 	
 	private static final int NOT_FOUND = -1;
 	
-	private void createJacobianMatrix(){
+	private void createLaplacianMatrix(){
 	    matrix = new double[this.nodes.length][this.nodes.length];
 	    for (Edge edge : edges){
             int first = NOT_FOUND;
@@ -36,9 +36,9 @@ public class Graph
                 }
             }
             if (first != NOT_FOUND && second != NOT_FOUND){
-                matrix[first][second] = matrix[second][first] = -1;
-                matrix[first][first]++;
-                matrix[second][second]++;
+                matrix[first][second] = matrix[second][first] = -1.0;
+                matrix[first][first] += edge.weightBA;
+                matrix[second][second] += edge.weightAB;
             }
         }
 	}

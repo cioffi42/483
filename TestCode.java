@@ -5,8 +5,6 @@ import java.util.List;
 public class TestCode {
     private static Node[] nodes;
     
-    public static int test = 0;
-    
     // Make Edge
     private static Edge me(int i, int j){
         return new Edge(1.0, 1.0, nodes[i], nodes[j]);
@@ -25,11 +23,11 @@ public class TestCode {
         }
         Edge[] usedEdges = new Edge[newEdges.size()];
     	usedEdges = newEdges.toArray(usedEdges);
+    	
         Graph graph = Spectral.createGraph(nodes, usedEdges);
-        
-        new Rating(graph).print();
-        Repair.repair(graph);
-        new Rating(graph).print();
+        //Graph graph = createRandomGraph(10);
+        //graph = Spectral.createGraph(graph.nodes, graph.edges);
+    	Repair.repair(graph);
         printGraph(graph);
         
         MainApplet.displayPane.setGraph(graph);
@@ -57,9 +55,7 @@ public class TestCode {
         graph.nodes[3].setCenter(new Point(100, 500));
         graph.nodes[4].setCenter(new Point(500, 500));*/
         
-        new Rating(graph).print();
         Repair.repair(graph);
-        new Rating(graph).print();
         printGraph(graph);
         
         MainApplet.displayPane.setGraph(graph);
@@ -79,12 +75,12 @@ public class TestCode {
         int edgeIndex = 0;
         
         for (int i=0; i<numNodes; i++){
-            nodes[i] = new Node();
+            nodes[i] = new Node("", "Node " + i, "");
         }
         
         for (int i=0; i<numNodes; i++){
             for (int j=i+1; j<numNodes; j++){
-                if (Math.random() > 0.5){
+                if (Math.random() > 0.7){
                     edgesFull[edgeIndex++] = new Edge(1.0, 1.0, nodes[i], nodes[j]);
                 }
             }

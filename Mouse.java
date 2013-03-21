@@ -37,8 +37,9 @@ public class Mouse extends MouseInputAdapter {
         Node node = MainApplet.displayPane.getMouseNode(event.getX(), event.getY());
         int cursor = (node != null) ? Cursor.HAND_CURSOR : Cursor.DEFAULT_CURSOR;
         MainApplet.displayPane.setCursor(Cursor.getPredefinedCursor(cursor));
-        if (node != null){
-            MainApplet.displayPane.focusNode = node;
+        if (DisplayPane.hoverNode != node){
+            // We need to update the hover node (which can be null)
+            DisplayPane.hoverNode = node;
             MainApplet.displayPane.repaint();
         }
     }
@@ -47,7 +48,8 @@ public class Mouse extends MouseInputAdapter {
     public void mouseClicked(MouseEvent event){
         Node node = MainApplet.displayPane.getMouseNode(event.getX(), event.getY());
         if (node != null){
-            MainApplet.displayPane.focusNode = node;
+            // User clicked on a node
+            DisplayPane.hoverNode = node;
             MainApplet.displayPane.repaint();
         }
     }

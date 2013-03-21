@@ -12,7 +12,7 @@ public class Rating {
      * ntw: node to wall (where wall means the boundary of the DisplayPane)
      */
     
-    private static enum Category {
+    public static enum Category {
         SE(0, 170.0, 250.0, false), NTN(1, 170.0, 300.0, false), 
         NTE(2, 100.0, 200.0, true), NTW(3, 90.0, 100.0, true);
         
@@ -35,15 +35,18 @@ public class Rating {
         }
     }
     
-    public double[] distances;
+    public double[] worstDistances;
+    public double[] sumDistances;
     public double[] weightedRatings;
     
     public double overallRating;
     
     public Rating(Graph graph){
         
-        distances = new double[Category.values().length];
-        Arrays.fill(distances, Double.MAX_VALUE);
+        worstDistances = new double[Category.values().length];
+        sumDistances = new double[Category.values().length];
+        Arrays.fill(worstDistances, Double.MAX_VALUE);
+        Arrays.fill(sumDistances, 0.0);
         
         int numNodes = graph.nodes.length;
         
@@ -56,8 +59,8 @@ public class Rating {
             int height = MainApplet.displayPane.getHeight();
             Point point = node.getCenter();
             double distance = MathUtils.min(point.x, width-point.x, point.y, height-point.y);
-            if (distance < distances[Category.NTW.index]){
-                distances[Category.NTW.index] = distance;
+            if (distance < worstDistances[Category.NTW.index]){
+                worstDistances[Category.NTW.index] = distance;
             }
         }
         
@@ -69,9 +72,10 @@ public class Rating {
                 if (graph.matrix[i][j] == 0){
                     // check distance between unconnected nodes
                     double distance = MathUtils.dist(graph.nodes[i], graph.nodes[j]);
-                    if (distance < distances[Category.NTN.index]){
-                        distances[Category.NTN.index] = distance;
+                    if (distance < worstDistances[Category.NTN.index]){
+                        worstDistances[Category.NTN.index] = distance;
                     }
+                    sumDistances[Category.NTN.index] += Math.min(1.0, MathUtils.weight(distance, Category.NTN));
                 }
             }
         }
@@ -82,18 +86,20 @@ public class Rating {
             
             // check edge lengths
             double length = MathUtils.length(edge);
-            if (length < distances[Category.SE.index]){
-                distances[Category.SE.index] = length;
+            if (length < worstDistances[Category.SE.index]){
+                worstDistances[Category.SE.index] = length;
             }
+            sumDistances[Category.SE.index] += Math.min(1.0, MathUtils.weight(length, Category.SE));
             
             // check node-edge distances
             for (int j=0; j<graph.nodes.length; j++){
                 Node node = graph.nodes[j];
                 if (node != edge.node1 && node != edge.node2){
                     double distance = MathUtils.dist(node, edge);
-                    if (distance < distances[Category.NTE.index]){
-                        distances[Category.NTE.index] = distance;
+                    if (distance < worstDistances[Category.NTE.index]){
+                        worstDistances[Category.NTE.index] = distance;
                     }
+                    sumDistances[Category.NTE.index] += Math.min(1.0, MathUtils.weight(distance, Category.NTE)); 
                 }
             }
         }
@@ -101,16 +107,17 @@ public class Rating {
         // Compute the overall rating
         weightedRatings = new double[Category.values().length];
         for (Category cat : Category.values()){
-            weightedRatings[cat.index] = MathUtils.weight(distances[cat.index], cat.MIN, cat.DESIRED, cat.CAP);
+            weightedRatings[cat.index] = MathUtils.weight(worstDistances[cat.index], cat);
         }
         int worstCategory = MathUtils.argmin(weightedRatings);
         overallRating = weightedRatings[worstCategory];
         
-        double sum = 0.0;
         for (double number : weightedRatings){
-            sum += Math.min(1.4, number);
+            overallRating += 0.001*Math.min(1.4, number);
         }
-        overallRating += 0.001*(sum/weightedRatings.length);
+        for (Category cat : Category.values()){
+            overallRating += 0.00001*sumDistances[cat.index];
+        }
     }
     
     // Returns the Rating object with the highest overallRating

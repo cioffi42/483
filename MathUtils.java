@@ -83,16 +83,16 @@ public class MathUtils {
         return sum / numbers.length;
     }
     
-    public static double weight(double number, double min, double desired, boolean cap){
-        if (number < min){
-            return number/min;
-        } else if (number < desired){
-            return 1.0 + (number-min)/(desired-min);
-        } else if (cap){
+    public static double weight(double number, Rating.Category cat){
+        if (number < cat.MIN){
+            return number/cat.MIN;
+        } else if (number < cat.DESIRED){
+            return 1.0 + (number-cat.MIN)/(cat.DESIRED-cat.MIN);
+        } else if (cat.CAP){
             return 2.0;
         } else {
             // TODO: figure out what I should return here
-            return 1.0 + (number-min)/(desired-min);
+            return 1.0 + (number-cat.MIN)/(cat.DESIRED-cat.MIN);
         }
     }
 }

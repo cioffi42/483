@@ -50,14 +50,13 @@ public class MainApplet extends JApplet {
                 public void propertyChange(PropertyChangeEvent event) {
                     validate();
                     // This code will be executed whenever the slider moves
-                    //TestCode.makeTestGraph();
+                    TestCode.testNodeDeterminer();
                 }
             }
         );
         
         validate();
         TestCode.testNodeDeterminer();
-        //TestCode.makeTestGraph();
     }
     
     //Initializes nodes and edges with dummy values.  Used while our database is not yet working.

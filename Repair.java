@@ -2,22 +2,26 @@
 public class Repair {
     
     private static final int SMALL_INCREMENT = 5;
-    private static final int BIG_INCREMENT = 250;
     private static final int MAX_ITERATIONS = 500;
     
     public static void repair(Graph graph){
         
+        System.out.println("-- Repair function start --\n");
+        System.out.printf("Before Repair: %.3f\n", new Rating(graph).overallRating);
+        
         if (new Rating(graph).isUnacceptable()) {
             // Start tweaking the nodes to improve the graph's Rating
             moveAllNodes(graph, SMALL_INCREMENT);
+            System.out.printf("After first repair: %.3f\n", new Rating(graph).overallRating);
         }
         
         // If the graph is still bad, then we need to keep repairing
         if (new Rating(graph).isUnacceptable()){
-            // TODO: this doesn't always work
-            moveAllNodes(graph, BIG_INCREMENT);
-            moveAllNodes(graph, SMALL_INCREMENT);
+            // TODO: work on next level of repair
+            //System.out.printf("After final repair: %.3f\n", new Rating(graph).overallRating);
         }
+        
+        System.out.println();
     }
     
     private static void moveAllNodes(Graph graph, int increment){

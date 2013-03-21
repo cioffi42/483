@@ -30,10 +30,11 @@ public class DisplayPane extends JPanel {
     private int offsetY;
     
     //Used to determine which nodes get displayed
-    private static final int MAX_NODES = 9;
+    private static final int MAX_NODES = 10;
     private static final double MIN_WEIGHT = 0.2;
     
     public static Node focusNode = null;
+    public static Node hoverNode = null;
     
     public DisplayPane()
     {
@@ -127,7 +128,7 @@ public class DisplayPane extends JPanel {
         for (int i = 0; i < graph.edges.length; i++)
         {
             edge = graph.edges[i];
-            if (edge.node1 == focusNode || edge.node2 == focusNode){
+            if (edge.node1 == hoverNode || edge.node2 == hoverNode){
                 g2.setColor(FOCUS_NODE_COLOR);
             } else {
                 g2.setColor(DEFAULT_NODE_COLOR);
@@ -143,7 +144,7 @@ public class DisplayPane extends JPanel {
         for (int i = 0; i < graph.nodes.length; i++)
         {
         	node = graph.nodes[i];
-        	drawCircle(g, node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY, (node == focusNode));
+        	drawCircle(g, node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY, (node == hoverNode));
         	drawText(g, node.getName(), node.getCenter().getX(), node.getCenter().getY());
         }
         
@@ -187,6 +188,7 @@ public class DisplayPane extends JPanel {
 			nextStartIndex += thisrLength;
 		}
 		
+		g.setColor(DEFAULT_NODE_COLOR);
 		for (int i = 0; i < nRows; i++) 
 		{
 			int rowheight = imgHeight/(nRows + 1);
