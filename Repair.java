@@ -18,7 +18,13 @@ public class Repair {
         // If the graph is still bad, then we need to keep repairing
         if (new Rating(graph).isUnacceptable()){
             // TODO: work on next level of repair
-            //System.out.printf("After final repair: %.3f\n", new Rating(graph).overallRating);
+            
+            // TODO: This is probably temporary
+            double scalar = 1.0 / new Rating(graph).overallRating;
+            if (scalar > 1.5 && scalar < 3.0){
+                System.out.printf("Scaling graph by factor of %.3f\n", scalar);
+                graph.setBorder(scalar, scalar);
+            }
         }
         
         System.out.println();

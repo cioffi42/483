@@ -1,24 +1,43 @@
-import java.util.*;
 
 public class Graph 
 {
-	Node[] nodes;
-	Edge[] edges;
+	public Node[] nodes;
+	public Edge[] edges;
+	
+	// If the graph fits on the screen, borderX and borderY will be 1.0
+	// (DisplayPane width) * (borderX) == (graph's true width)
+	// (DisplayPane height) * (borderY) == (graph's true height)
+	private double borderX;
+	private double borderY;
 	
 	public double[][] matrix;
-	
-	public Graph(List<Node> nodes, List<Edge> edges)
-	{
-	    this.nodes = nodes.toArray(this.nodes);
-	    this.edges = edges.toArray(this.edges);
-	    createLaplacianMatrix();
-	}
 	
 	public Graph(Node[] nodes, Edge[] edges)
 	{
 		this.nodes = nodes;
 		this.edges = edges;
+		borderX = 1.0;
+		borderY = 1.0;
 		createLaplacianMatrix();
+	}
+	
+	public double getBorderX(){
+	    return borderX;
+	}
+	
+	public double getBorderY(){
+	    return borderY;
+	}
+	
+	public void setBorder(double x, double y){
+	    if (borderX == 1.0 && borderY == 1.0){
+	        borderX = x;
+	        borderY = y;
+	        for (Node node : nodes){
+	            node.getCenter().x *= borderX;
+	            node.getCenter().y *= borderY;
+	        }
+	    }
 	}
 	
 	private static final int NOT_FOUND = -1;

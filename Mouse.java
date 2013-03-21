@@ -5,25 +5,31 @@ import javax.swing.event.MouseInputAdapter;
 
 public class Mouse extends MouseInputAdapter {
     
-    private int curX, curY, prevX, prevY;
+    private int startX, startY, originalOffsetX, originalOffsetY;
     private boolean isDragged = false;
     
     @Override
     public void mousePressed(MouseEvent event){
-        curX = prevX = event.getX();
-        curY = prevY = event.getY();
-        isDragged = true;
+        Node node = MainApplet.displayPane.getMouseNode(event.getX(), event.getY());
+        if (node != null){
+            // User clicked on a node
+            DisplayPane.hoverNode = node;
+            MainApplet.displayPane.repaint();
+        } else {
+            // User clicked on anything but a node
+            startX = event.getX();
+            startY = event.getY();
+            originalOffsetX = MainApplet.displayPane.offsetX;
+            originalOffsetY = MainApplet.displayPane.offsetY;
+            isDragged = true;
+        }
     }
     
     @Override
     public void mouseDragged(MouseEvent event){
         if (isDragged){
-            prevX = curX;
-            prevY = curY;
-            curX = event.getX();
-            curY = event.getY();
-            //MainApplet.displayPane.changeOffset(prevX-curX, prevY-curY);
-            //MainApplet.displayPane.repaint();
+            MainApplet.displayPane.setOffset(originalOffsetX + startX-event.getX(), originalOffsetY + startY-event.getY());
+            MainApplet.displayPane.repaint();
         }
     }
     
@@ -39,16 +45,6 @@ public class Mouse extends MouseInputAdapter {
         MainApplet.displayPane.setCursor(Cursor.getPredefinedCursor(cursor));
         if (DisplayPane.hoverNode != node){
             // We need to update the hover node (which can be null)
-            DisplayPane.hoverNode = node;
-            MainApplet.displayPane.repaint();
-        }
-    }
-    
-    @Override
-    public void mouseClicked(MouseEvent event){
-        Node node = MainApplet.displayPane.getMouseNode(event.getX(), event.getY());
-        if (node != null){
-            // User clicked on a node
             DisplayPane.hoverNode = node;
             MainApplet.displayPane.repaint();
         }

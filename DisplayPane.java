@@ -26,8 +26,8 @@ public class DisplayPane extends JPanel {
     private static int imgWidth;
     
     private Mouse mouse;
-    private int offsetX;
-    private int offsetY;
+    public int offsetX;
+    public int offsetY;
     
     //Used to determine which nodes get displayed
     private static final int MAX_NODES = 10;
@@ -145,7 +145,7 @@ public class DisplayPane extends JPanel {
         {
         	node = graph.nodes[i];
         	drawCircle(g, node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY, (node == hoverNode));
-        	drawText(g, node.getName(), node.getCenter().getX(), node.getCenter().getY());
+        	drawText(g, node.getName(), node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY);
         }
         
     }
@@ -164,7 +164,7 @@ public class DisplayPane extends JPanel {
     //problem when using a node.getName() that is NULL, error check for this
     //need to manage it so words don't get cut in half by a new line
     //not centered correctly
-    private static void drawText(Graphics g, String name, double xCenter, double yCenter)
+    private void drawText(Graphics g, String name, double xCenter, double yCenter)
     {
     	//name = "Insert This Node's Name Here";							//warning, it doesn't take the node's real name
 		int length = name.length();
@@ -202,15 +202,19 @@ public class DisplayPane extends JPanel {
     	paint(g);
     }
     
-    public void changeOffset(int dx, int dy){
-        offsetX += dx;
-        offsetY += dy;
+    public void setOffset(int newOffsetX, int newOffsetY){
+        if (newOffsetX >= 0.0 && newOffsetX < getWidth()*(graph.getBorderX() - 1.0)){
+            offsetX = newOffsetX;
+        }
+        if (newOffsetY >= 0.0 && newOffsetY < getHeight()*(graph.getBorderY() - 1.0)){
+            offsetY = newOffsetY;
+        }
     }
     
     public Node getMouseNode(int x, int y){
         for (Node node : graph.nodes){
-            double scaledX = (x - node.getCenter().getX()) / (imgWidth/2);
-            double scaledY = (y - node.getCenter().getY()) / (imgHeight/2);
+            double scaledX = (x - (node.getCenter().getX()-offsetX)) / (imgWidth/2);
+            double scaledY = (y - (node.getCenter().getY()-offsetY)) / (imgHeight/2);
             if (scaledX*scaledX + scaledY*scaledY <= 1.0){
                 return node;
             }
