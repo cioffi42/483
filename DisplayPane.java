@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.*;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -30,10 +31,10 @@ public class DisplayPane extends JPanel {
     public int offsetY;
     
     //Used to determine which nodes get displayed
-    private static final int MAX_NODES = 10;
+    private static final int MAX_NODES = 11;
     private static final double MIN_WEIGHT = 0.2;
     
-    public static Node focusNode = null;
+    private static Node focusNode = null;
     public static Node hoverNode = null;
     
     public DisplayPane()
@@ -65,6 +66,46 @@ public class DisplayPane extends JPanel {
         }
     }
     
+    public Node getFocusNode(){
+        return focusNode;
+    }
+    
+    public void setFocusNode(Node focus){
+        focusNode = focus;
+        hoverNode = null;
+        offsetX = offsetY = 0;
+        
+        Node[] nodes = DisplayPane.determineNodes(focus);
+        Arrays.sort(nodes);
+        
+        List<Edge> newEdges = new ArrayList<Edge>();
+        
+        for (int i = 0; i < MainApplet.edges.length; i++)
+        {
+            if (MainApplet.edges[i].includesNodes(nodes))
+            {
+                newEdges.add(MainApplet.edges[i]);
+            }
+        }
+        Edge[] usedEdges = new Edge[newEdges.size()];
+        usedEdges = newEdges.toArray(usedEdges);
+        
+        // Generate the graph
+        Graph graph = Spectral.createGraph(nodes, usedEdges);
+        Repair.repair(graph);
+        setGraph(graph);
+        
+        MainApplet.displayPane.repaint();
+    }
+    
+    // We need to avoid having nodes added to a list more than once
+    private static void addNode(List<Node> nodes, Node node){
+        // If the node isn't in the list, then add it
+        if (nodes.indexOf(node) == -1){
+            nodes.add(node);
+        }
+    }
+    
     //Returns the nodes that will be displayed with a given focus node
     public static Node[] determineNodes(Node focus)
     {
@@ -80,9 +121,9 @@ public class DisplayPane extends JPanel {
     		if (oldEdges[i].hasNode(focus))
     		{
     			if (oldEdges[i].node1 == focus && oldEdges[i].weightAB > MIN_WEIGHT)
-    				newNodes.add(oldEdges[i].node2);
+    				addNode(newNodes, oldEdges[i].node2);
     			else if (oldEdges[i].node2 == focus && oldEdges[i].weightBA > MIN_WEIGHT)
-    				newNodes.add(oldEdges[i].node1);
+    				addNode(newNodes, oldEdges[i].node1);
     		}
     		if (newNodes.size() >= MAX_NODES)
     		{
@@ -92,7 +133,7 @@ public class DisplayPane extends JPanel {
     	
     	while (newNodes.size() < MAX_NODES)
     	{
-    		for (int i = 1; i < newNodes.size() && newNodes.size() >= MAX_NODES; i++)
+    		for (int i = 1; i < newNodes.size() && newNodes.size() < MAX_NODES; i++)
     		{
     			temp = newNodes.get(i);
     			for (int j = 0; j < oldEdges.length; j++)
@@ -100,9 +141,9 @@ public class DisplayPane extends JPanel {
 	    			if (oldEdges[j].hasNode(temp))
 	        		{
 	        			if (oldEdges[j].node1 == temp && oldEdges[j].weightAB > MIN_WEIGHT)
-	        				newNodes.add(oldEdges[j].node2);
+	        				addNode(newNodes, oldEdges[j].node2);
 	        			else if (oldEdges[j].node2 == temp && oldEdges[j].weightBA > MIN_WEIGHT)
-	        				newNodes.add(oldEdges[j].node1);
+	        				addNode(newNodes, oldEdges[j].node1);
 	        		}
 	        		if (newNodes.size() >= MAX_NODES)
 	        		{
@@ -144,10 +185,15 @@ public class DisplayPane extends JPanel {
         for (int i = 0; i < graph.nodes.length; i++)
         {
         	node = graph.nodes[i];
-        	drawCircle(g, node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY, (node == hoverNode));
+        	boolean drawNodeInColor = (node == hoverNode || node == focusNode);
+        	drawCircle(g, node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY, drawNodeInColor);
         	drawText(g, node.getName(), node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY);
         }
         
+    }
+    
+    public Graph getGraph(){
+        return graph;
     }
     
     public void setGraph(Graph graph){

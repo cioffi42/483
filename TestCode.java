@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -31,6 +32,18 @@ public class TestCode {
         printGraph(graph);
         
         MainApplet.displayPane.setGraph(graph);
+    }
+    
+    public static String[] tryAllGraphs(){
+        String[] results = new String[MainApplet.nodes.length];
+        for (int i=0; i<MainApplet.nodes.length; i++){
+            Node node = MainApplet.nodes[i];
+            MainApplet.displayPane.setFocusNode(node);
+            double rating = new Rating(MainApplet.displayPane.getGraph()).overallRating;
+            results[i] = String.format("%.3f", rating) + ": " + node.getName();
+        }
+        Arrays.sort(results);
+        return results;
     }
     
     public static void makeTestGraph(){

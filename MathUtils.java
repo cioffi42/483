@@ -19,10 +19,14 @@ public class MathUtils {
     }
     
     public static double slope(Point a, Point b){
-        if ((a.x - b.x) != 0){
-            return (a.y - b.y) / (a.x - b.x);
-        } else {
+        boolean smallDeltaX = (Math.abs(a.x - b.x) < 5.0);
+        boolean smallDeltaY = (Math.abs(a.y - b.y) < 5.0);
+        if (smallDeltaX && !smallDeltaY){
             return VERTICAL;
+        } else if (!smallDeltaX && smallDeltaY){
+            return HORIZONTAL;
+        } else {
+            return (a.y - b.y) / (a.x - b.x);
         }
     }
     

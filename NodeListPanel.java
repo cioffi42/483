@@ -79,8 +79,11 @@ public class NodeListPanel extends JPanel implements ListSelectionListener
     class GoListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String nodename = list.getSelectedValue().toString();
+            Node node = MainApplet.findNodeByName(nodename);
+            if (node != null){
+                MainApplet.displayPane.setFocusNode(node);
+            }
             
-            System.out.println(nodename);
         }
     }
  

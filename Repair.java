@@ -21,9 +21,9 @@ public class Repair {
             
             // TODO: This is probably temporary
             double scalar = 1.0 / new Rating(graph).overallRating;
-            if (scalar > 1.5 && scalar < 3.0){
-                System.out.printf("Scaling graph by factor of %.3f\n", scalar);
-                graph.setBorder(scalar, scalar);
+            if (scalar > 1.1 && scalar < 3.0){
+                //System.out.printf("Scaling graph by factor of %.3f\n", scalar);
+                //graph.setBorder(scalar, scalar);
             }
         }
         

@@ -2,7 +2,7 @@
 // TODO: these getters/setters aren't doing anything, so either 
 // add something to them, or get rid of them
 
-public class Node 
+public class Node implements Comparable<Node>
 {
     private String id;
     private String name;
@@ -61,4 +61,10 @@ public class Node
     {
         description = newDescription;
     }
+
+    @Override
+    public int compareTo(Node other) {
+        return name.compareTo(other.getName());
+    }
+    
 }

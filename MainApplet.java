@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Arrays;
 
 import javax.swing.*;
 
@@ -24,7 +25,10 @@ public class MainApplet extends JApplet {
     
     @Override
     public void init(){
-        initValues();
+    	
+        // Parse the provided CSV file to get nodes and edges
+    	Parser.parse();
+    	
         displayPane = new DisplayPane();
         JPanel infoPane = new JPanel(new BorderLayout());
         sidePane = new sidePanel();
@@ -50,13 +54,29 @@ public class MainApplet extends JApplet {
                 public void propertyChange(PropertyChangeEvent event) {
                     validate();
                     // This code will be executed whenever the slider moves
-                    TestCode.testNodeDeterminer();
+                    displayPane.setFocusNode(displayPane.getFocusNode());
                 }
             }
         );
         
         validate();
-        TestCode.testNodeDeterminer();
+        displayPane.setFocusNode(nodes[0]);
+        
+        // This is for testing purposes only
+        /*String[] tests = TestCode.tryAllGraphs();
+        System.out.println("TESTS:");
+        for (String result : tests){
+            System.out.println(result);
+        }*/
+    }
+    
+    public static Node findNodeByName(String name){
+        for (int i=0; i<nodes.length; i++){
+            if (nodes[i].getName().compareTo(name) == 0){
+                return nodes[i];
+            }
+        }
+        return null;
     }
     
     //Initializes nodes and edges with dummy values.  Used while our database is not yet working.

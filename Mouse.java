@@ -13,8 +13,9 @@ public class Mouse extends MouseInputAdapter {
         Node node = MainApplet.displayPane.getMouseNode(event.getX(), event.getY());
         if (node != null){
             // User clicked on a node
-            DisplayPane.hoverNode = node;
-            MainApplet.displayPane.repaint();
+            if (node != MainApplet.displayPane.getFocusNode()){
+                MainApplet.displayPane.setFocusNode(node);
+            }
         } else {
             // User clicked on anything but a node
             startX = event.getX();
