@@ -99,4 +99,11 @@ public class MathUtils {
             return 1.0 + (number-cat.MIN)/(cat.DESIRED-cat.MIN);
         }
     }
+    
+    public static int search(Object[] array, Object obj){
+        for (int i=0; i<array.length; i++){
+            if (obj == array[i]) return i;
+        }
+        return -1;
+    }
 }

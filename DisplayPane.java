@@ -90,12 +90,26 @@ public class DisplayPane extends JPanel {
         Edge[] usedEdges = new Edge[newEdges.size()];
         usedEdges = newEdges.toArray(usedEdges);
         
+        // Record the old positions of nodes (for animations)
+        for (Node node : nodes){
+            if (node.getCenter() == null || graph == null || MathUtils.search(graph.nodes, node) == -1){
+                node.setCenter(new Point(getWidth()/2,getHeight()/2));
+            }
+            node.oldCenter = new Point(node.getCenter().x, node.getCenter().y);
+        }
+        
         // Generate the graph
         Graph graph = Spectral.createGraph(nodes, usedEdges);
         Repair.repair(graph);
         setGraph(graph);
         
-        MainApplet.displayPane.repaint();
+        // Record the new positions of nodes (for animations)
+        for (Node node : nodes){
+            node.newCenter = new Point(node.getCenter().x, node.getCenter().y);
+        }
+        
+        // Execute animation
+        (new Animation(nodes)).start();
     }
     
     // We need to avoid having nodes added to a list more than once

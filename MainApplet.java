@@ -32,18 +32,22 @@ public class MainApplet extends JApplet {
         displayPane = new DisplayPane();
         JPanel infoPane = new JPanel(new BorderLayout());
         sidePane = new sidePanel();
+        JPanel topLeftPane = new JPanel(new BorderLayout());
         nodeListPane = new NodeListPanel();
         
         displayPane.setMinimumSize(new Dimension(400, 400));
         infoPane.setMinimumSize(new Dimension(300, 400));
         
-        infoPane.add(sidePane, BorderLayout.CENTER);
+        infoPane.add(topLeftPane, BorderLayout.CENTER);
         infoPane.add(nodeListPane, BorderLayout.SOUTH);
+        topLeftPane.add(sidePane, BorderLayout.CENTER);
         
         setSize(1200, 600);
         mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, displayPane, infoPane);
         mainPanel.setOneTouchExpandable(true);
         this.add(mainPanel);
+        
+        //sidePane.go();
         
         validate();
         mainPanel.setDividerLocation(DISPLAY_WIDTH);

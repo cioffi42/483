@@ -8,6 +8,10 @@ public class Node implements Comparable<Node>
     private String name;
     private String description;
     private Point center;
+    
+    // This is used for animations
+    public Point oldCenter;
+    public Point newCenter;
 	
 	// This constructor shouldn't be called, it's just here for
 	// testing purposes
