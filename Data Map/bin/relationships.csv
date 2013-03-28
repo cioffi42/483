@@ -1,0 +1,121 @@
+Concept A,W to A from B,W to B from A,Concept B
+Position,0.9,0.9,v = dx/dt
+Velocity,0.9,0.9,v = dx/dt
+Speed,0.6,1,Velocity
+Velocity,0.9,0.9,Acceleration
+Position,1,0.8,Displacement
+Velocity,1,0.8,a = dv/dt
+Acceleration,1,0.9,a = dv/dt
+Acceleration,1,0.9,F = m a
+Force,1,0.9,F = m a
+Velocity,0.7,0.4,v_T = \omega x r
+Acceleration,0.7,0.4,a_T = \alpha x r
+Angular Position,0.9,0.9,\omega = d\theta/dt
+Angular Velocity,0.9,0.9,\omega = d\theta/dt
+Angular Velocity,0.9,0.9,\alpha = d\omega/dt
+Angular Acceleration,0.9,0.9,\alpha = d\omega/dt
+Torque,1,1,\tau = r x F
+Force,1,0.7,\tau = r x F
+Lever Arm,0.7,1,\tau = r x F
+Force,1,0.8,F = dp/dt
+Momentum,1,0.9,F = dp/dt
+Momentum,1,0.9,p = mv
+Mass,1,0.9,p = mv
+Velocity,1,0.9,p = mv
+Kinetic Energy,1,0.9,K = p^2/2m
+Momentum,1,0.7,K = p^2/2m
+Mass,1,0.4,K = p^2/2m
+Kinetic Energy,1,0.9,K = 1/2 mv^2
+Speed,1,0.7,K = 1/2 mv^2
+Mass,1,0.4,K = 1/2 mv^2
+Power,1,0.9,P = F*v
+Force,1,0.6,P = F*v
+Velocity,1,0.4,P = F*v
+Torque,1,0.8,\tau_net = I\alpha
+Moment of Inertia,1,0.8,\tau_net = I\alpha
+Angular Acceleration,1,0.8,\tau_net = I\alpha
+Work,1,0.9,Work = \int F*dr
+Force,1,0.7,Work = \int F*dr
+Mechanical Energy,1,1,E = K + K_R + U
+Rotational Kinetic Energy,1,0.8,E = K + K_R + U
+Kinetic Energy,1,0.8,E = K + K_R + U
+Potential Energy,1,0.9,E = K + K_R + U
+Potential Energy,1,0.9,Gravitational Potential Energy
+Potential Energy,1,0.9,Elastic Potential Energy
+Potential Energy,1,0.9,U = U_G + U_S
+Angular Momentum,1,0.9,L = r x p
+Momentum,1,0.9,L = r x p
+Lever Arm,1,0.9,L = r x p
+Angular Momentum,1,0.9,L = I \omega
+Moment of Inertia,1,0.9,L = I \omega
+Angular Velocity,1,0.9,L = I \omega
+Torque,1,0.9,\tau = dL/dt
+Angular Momentum,1,0.9,\tau = dL/dt
+Rotational Kinetic Energy,1,0.9,K_R = L^2/2I
+Angular Momentum,1,0.9,K_R = L^2/2I
+Moment of Inertia,1,0.9,K_R = L^2/2I
+Normal Force,0.7,1,Force
+Normal Force,0.7,1,Elastic Force
+Friction,1,0.9,Static Friction
+Friction,1,0.9,Kinetic Friction
+Prevents relative motion,0.8,1,Static Friction
+Resists relative motion,0.8,1,Kinetic Friction
+Static friction,1,0.9,f_s <= \mu_s F_N
+Coefficient of static friction,1,0.9,f_s <= \mu_s F_N
+Normal Force,1,0.6,f_s <= \mu_s F_N
+Kinetic Friction,1,0.9,f_k = \mu_k F_N
+Coefficient of kinetic friction,1,0.9,f_k = \mu_k F_N
+Normal Force,1,0.6,f_k = \mu_k F_N
+Gravitational Force,1,0.8,Weight
+Gravitational Force,1,0.8,F_G = mg near Earth's surface
+Gravitational field strength,1,0.9,F_G = mg near Earth's surface
+Gravitational field strength,1,0.8,Free-fall acceleration
+Moment of Inertia,1,0.9,I = \Sigma mr^2 = \int r^2 dm
+Mass,1,0.6,I = \Sigma mr^2 = \int r^2 dm
+Impulse,1,0.9,J = \int F dt = F \Delta t
+Force,1,0.7,J = \int F dt = F \Delta t
+Impulse,1,0.9,J = \Delta p
+Momentum,1,0.8,J = \Delta p
+Elastic Force,0.8,1,F_S = -k \Delta L
+Spring constant,0.8,1,F_S = -k \Delta L
+Spring constant,0.8,1,U_S = (1/2) k \Delta L^2
+Elastic Potential Energy,1,1,U_S = (1/2) k \Delta L^2
+Gravitational Force,1,0.8,F_G = Gm_1 m_2/r^2
+Mass,1,0.8,F_G = Gm_1 m_2/r^2
+Inverse Square Law,0.6,1,F_G = Gm_1 m_2/r^2
+Moment of Inertia,1,0.7,Solid Disc: I =1/2 mr^2
+Moment of Inertia,1,0.7,Solid Sphere: I =2/5 mr^2
+Moment of Inertia,1,0.7,Hoop: I =mr^2
+Moment of Inertia,1,0.7,Uniform Rod: I = 1/12 mL^2
+Gravitational Potential Energy,1,0.8,U_G = mgz near surface of Earth
+Gravitational Potential Energy,1,0.8,U_G = -GMm/r
+Mass,1,0.6,U_G = -GMm/r
+Mass,1,0.6,U_G = mgz near surface of Earth
+Momentum,1,0.8,Conservation of Momentum: \Sigma p_i = \Sigma p_f
+Force,1,0.7,Gravitational Force
+Force,1,0.7,Friction Force
+F_G = Gm_1 m_2/r^2,1,0.9,Universal Gravitational Constant
+U_G = -GMm/r,1,0.9,Universal Gravitational Constant
+Acceleration,0.9,0.6,Free-fall acceleration
+Work,1,0.9,W = \Delta E
+W = \Delta E,0.9,1,Mechanical Energy
+Mass,0.9,0.7,F_G = mg near Earth's surface
+Angular Frequency (rad/s),0.9,0.9,Frequency (Hz)
+Angular Frequency (rad/s),0.9,0.7,\omega^2 = k/m (mass-spring)
+Angular Frequency (rad/s),0.9,0.7,"\omega^2 = g/L (simple pendulum, small angles)"
+Spring constant,0.9,0.7,\omega^2 = k/m (mass-spring)
+Gravitational field strength,0.9,0.7,"\omega^2 = g/L (simple pendulum, small angles)"
+mass,0.9,0.7,\omega^2 = k/m (mass-spring)
+Length of pendulum,0.9,0.7,"\omega^2 = g/L (simple pendulum, small angles)"
+Stretching of spring,0.7,0.9,U_S = (1/2) k \Delta L^2
+Stretching of spring,0.7,0.9,F_S = -k \Delta L
+Period (s),0.9,0.9,f = 1/T
+Frequency (Hz),0.9,0.9,f = 1/T
+Angular Frequency (rad/s),0.9,0.7,x(t) = x_m cos(\omega t + \phi)
+Amplitude,0.9,1,x(t) = x_m cos(\omega t + \phi)
+Phase,0.9,1,x(t) = x_m cos(\omega t + \phi)
+Simple Harmonic Oscillator,0.9,0.9,x(t) = x_m cos(\omega t + \phi)
+Simple Harmonic Oscillator,0.9,0.9,a_x = -\omega^2 x
+Angular Frequency (rad/s),0.9,0.7,a_x = -\omega^2 x
+Acceleration,0.9,0.4,a_x = -\omega^2 x
+Position,0.9,0.4,a_x = -\omega^2 x
