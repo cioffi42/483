@@ -20,14 +20,26 @@ public class NodeListPanel extends JPanel implements ListSelectionListener
     private JButton goButton;
     private JTextField nodeNameTextField;
  
-    public NodeListPanel()
+    public NodeListPanel(boolean tags)
     {
         super(new BorderLayout());
+        String[] nodearray ;
+        if(tags == false){
+        nodearray = new String[MainApplet.nodes.length];
+        }
+        else{
+        	 nodearray = new String[MainApplet.tags.length];
+        }
         
-        String[] nodearray = new String[MainApplet.nodes.length];
         for (int i = 0; i < nodearray.length; i++)
         {
-        	nodearray[i] = MainApplet.nodes[i].getName();
+        	
+        	if(tags == false){
+        		nodearray[i] = MainApplet.nodes[i].getName();;
+            }
+            else{
+            	nodearray[i] = MainApplet.tags[i];
+             }
         }
         Arrays.sort(nodearray);
  
@@ -100,29 +112,7 @@ public class NodeListPanel extends JPanel implements ListSelectionListener
         public void actionPerformed(ActionEvent e) {
             String name = nodeNameTextField.getText();
             
-            /* Manual search algorithm
-            for (int i=0; i < list.getModel().getSize(); i++)
-            {
-                String str = ((String)list.getModel().getElementAt(i)).toLowerCase();
-               	if (str.startsWith(name))
-                {
-                	int j = list.getSelectedIndex() + 1;
-                	// if the current selected value already starts with search name, go to the next value
-                	if (!(((String)list.getModel().getElementAt(j)).toLowerCase().startsWith(name)))
-                		j = i;
-                	//if (!((String)list.getModel().getElementAt(j)).toLowerCase().startsWith(name))
-                	//	j = i;
-                    list.setSelectedIndex(j); 
-                    list.ensureIndexIsVisible(j); 
-                    break;
-                }
-                else if (i+1 == list.getModel().getSize())
-                {
-                    Toolkit.getDefaultToolkit().beep();
-                    nodeNameTextField.requestFocusInWindow();
-                    nodeNameTextField.selectAll();
-                }
-            }*/
+            
             
             // Simple search using list functions
             int index = list.getNextMatch(name, 0, Position.Bias.Forward);
@@ -192,33 +182,5 @@ public class NodeListPanel extends JPanel implements ListSelectionListener
         }
     }
  
-    /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event-dispatching thread.
-     */
-    private static void createAndShowGUI() {
-        //Create and set up the window.
-        JFrame frame = new JFrame("Node List Panel");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
- 
-        //Create and set up the content pane.
-        JComponent newContentPane = new NodeListPanel();
-        newContentPane.setOpaque(true); //content panes must be opaque
-        frame.setContentPane(newContentPane);
- 
-        //Display the window.
-        frame.pack();
-        frame.setVisible(true);
-    }
- 
-    public static void main(String[] args) {
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
-    }
+  
 }
