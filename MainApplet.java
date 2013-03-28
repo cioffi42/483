@@ -1,11 +1,11 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 
 import javax.swing.*;
-
 
 public class MainApplet extends JApplet {
 
@@ -18,11 +18,11 @@ public class MainApplet extends JApplet {
     public static DisplayPane displayPane;
     public static sidePanel sidePane;
     public static NodeListPanel nodeListPane;
-    
+    public static NodeListPanel tagListPane;
     //Contain all nodes and edges from file
     public static Node[] nodes;
     public static Edge[] edges;
-    
+    public static String [] tags = {"Midterm 1","Midterm 2","Final"}; 
     @Override
     public void init(){
     	
@@ -32,23 +32,32 @@ public class MainApplet extends JApplet {
         displayPane = new DisplayPane();
         JPanel infoPane = new JPanel(new BorderLayout());
         sidePane = new sidePanel();
-        JPanel topLeftPane = new JPanel(new BorderLayout());
-        nodeListPane = new NodeListPanel();
-        
+        nodeListPane = new NodeListPanel(false);
+        tagListPane = new NodeListPanel(true);
         displayPane.setMinimumSize(new Dimension(400, 400));
         infoPane.setMinimumSize(new Dimension(300, 400));
         
-        infoPane.add(topLeftPane, BorderLayout.CENTER);
-        infoPane.add(nodeListPane, BorderLayout.SOUTH);
-        topLeftPane.add(sidePane, BorderLayout.CENTER);
+        JTabbedPane tabbedPane = new JTabbedPane();
+        ImageIcon icon = createImage("NewNode.gif");
+
         
+        tabbedPane.addTab("Node list", icon, nodeListPane,
+                          "List of nodes");
+        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+
+        tabbedPane.addTab("Tags", icon,  tagListPane,
+                          "Specail tags");
+       tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+        
+        
+        infoPane.add(sidePane, BorderLayout.CENTER);
+        infoPane.add( tabbedPane, BorderLayout.SOUTH);
+      
         setSize(1200, 600);
         mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, displayPane, infoPane);
         mainPanel.setOneTouchExpandable(true);
         this.add(mainPanel);
-        
-        //sidePane.go();
-        
+          
         validate();
         mainPanel.setDividerLocation(DISPLAY_WIDTH);
         
@@ -66,6 +75,10 @@ public class MainApplet extends JApplet {
         validate();
         displayPane.setFocusNode(nodes[0]);
         
+        
+      //  sidePane.connect();
+        
+        
         // This is for testing purposes only
         /*String[] tests = TestCode.tryAllGraphs();
         System.out.println("TESTS:");
@@ -74,7 +87,17 @@ public class MainApplet extends JApplet {
         }*/
     }
     
-    public static Node findNodeByName(String name){
+    private JComponent makeTextPanel(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private ImageIcon createImage(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static Node findNodeByName(String name){
         for (int i=0; i<nodes.length; i++){
             if (nodes[i].getName().compareTo(name) == 0){
                 return nodes[i];
@@ -173,6 +196,8 @@ public class MainApplet extends JApplet {
 				me(0,29), me(0,30), me(0,31), me(0,32), me(0,33), me(0,34), me(0,35),
 				me(0,36)};
         edges = newEdges;
+        
+        
     }
     
     // Make Edge
