@@ -50,18 +50,27 @@ public class NodeListPanel extends JPanel implements ListSelectionListener
  
         //Create the list and put it in a scroll pane.
         list = new JList(listModel);
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        if(tags==true){
+        	list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        }
+        else{
+        	list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        }
         list.setSelectedIndex(0);
+        
         list.addListSelectionListener(this);
         list.setVisibleRowCount(5);
         JScrollPane listScrollPane = new JScrollPane(list);
  
+      
+        
+	  
         JButton searchButton = new JButton(searchString);
-        SearchListener SearchListener = new SearchListener(searchButton);
-        searchButton.setActionCommand(searchString);
-        searchButton.addActionListener(SearchListener);
-        searchButton.setEnabled(false);
- 
+	    SearchListener SearchListener = new SearchListener(searchButton);
+	    searchButton.setActionCommand(searchString);
+	    searchButton.addActionListener(SearchListener);
+	    searchButton.setEnabled(false);
+        
         goButton = new JButton(goString);
         goButton.setActionCommand(goString);
         goButton.addActionListener(new GoListener());
@@ -77,7 +86,10 @@ public class NodeListPanel extends JPanel implements ListSelectionListener
         buttonPane.setLayout(new BoxLayout(buttonPane,
                                            BoxLayout.LINE_AXIS));
         buttonPane.add(nodeNameTextField);
-        buttonPane.add(searchButton);
+        if( tags== false){
+        	buttonPane.add(searchButton);
+        }
+       
         buttonPane.add(Box.createHorizontalStrut(5));
         buttonPane.add(new JSeparator(SwingConstants.VERTICAL));
         buttonPane.add(Box.createHorizontalStrut(5));
@@ -93,7 +105,7 @@ public class NodeListPanel extends JPanel implements ListSelectionListener
             String nodename = list.getSelectedValue().toString();
             Node node = MainApplet.findNodeByName(nodename);
             if (node != null){
-                MainApplet.displayPane.setFocusNode(node, true);
+                MainApplet.displayPane.setFocusNode(node);
             }
             
         }
