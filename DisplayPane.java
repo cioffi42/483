@@ -38,7 +38,7 @@ public class DisplayPane extends JPanel {
     
     //Used to determine which nodes get displayed
     private static final int MAX_NODES = 11;
-    private static final double MIN_WEIGHT = 0.2;
+    private static final double MIN_WEIGHT = 0.01;
     
     private static Node focusNode = null;
     public static Node hoverNode = null;
@@ -122,11 +122,63 @@ public class DisplayPane extends JPanel {
     }
     
     // We need to avoid having nodes added to a list more than once
-    private static void addNode(List<Node> nodes, Node node){
+    private static void addNode(List<Node> nodes, Node node, double weight){
+    	int index = nodes.indexOf(node);
+    	
         // If the node isn't in the list, then add it
-        if (nodes.indexOf(node) == -1){
+        if (index == -1){
+        	node.setWeight(weight);
             nodes.add(node);
         }
+        // If the node is on the list, but the weight is lower, then modify the weight
+        else
+        {
+        	if (nodes.get(index).getWeight() < weight)
+        		nodes.get(index).setWeight(weight);
+        }
+    }
+    
+    //Performs a quicksort on a list of nodes
+    public static List<Node> sortNodes(List<Node> list)
+    {
+    	Node pivotNode;
+    	List<Node> less, greater, newList;
+    	int pivotSize;
+    	
+    	//Base case:  Only 0 or 1 elements
+        if (list.size() <= 1)
+            return list;
+        
+        pivotSize = list.size() / 2;
+        pivotNode = list.get(pivotSize);
+        
+        less = new ArrayList<Node>();
+        greater = new ArrayList<Node>();
+        newList = new ArrayList<Node>();
+        
+        //Adds smaller weights to 'less', and larger weights to 'greater'
+        for (int i = 0; i < list.size(); i++)
+        {
+        	//Ignores the pivot node
+        	if (i != pivotSize)
+        	{
+	        	if (list.get(i).getWeight() > pivotNode.getWeight())
+	        		greater.add(list.get(i));
+	        	else
+	        		less.add(list.get(i));
+        	}
+        }
+        
+        //Recursively calls sortNodes with the sub-lists
+        less = sortNodes(less);
+        greater = sortNodes(greater);
+        
+        //Adds everything back together
+        newList.addAll(greater);
+        newList.add(pivotNode);
+        newList.addAll(less);
+        
+        return newList;
     }
     
     //Returns the nodes that will be displayed with a given focus node
@@ -137,26 +189,33 @@ public class DisplayPane extends JPanel {
     	Edge[] oldEdges = MainApplet.edges;
     	List<Node> newNodes = new ArrayList<Node>();
     	Node temp;
+    	double weight;
+    	int traversed = 1;
     	
     	newNodes.add(focus);
+    	newNodes.get(0).setWeight(1.0);
+    	
     	for (int i = 0; i < oldEdges.length; i++)
     	{
     		if (oldEdges[i].hasNode(focus))
     		{
     			if (oldEdges[i].node1 == focus && oldEdges[i].weightAB > MIN_WEIGHT)
-    				addNode(newNodes, oldEdges[i].node2);
+    			{
+    				weight = oldEdges[i].weightAB;
+    				addNode(newNodes, oldEdges[i].node2, weight);
+    			}
     			else if (oldEdges[i].node2 == focus && oldEdges[i].weightBA > MIN_WEIGHT)
-    				addNode(newNodes, oldEdges[i].node1);
-    		}
-    		if (newNodes.size() >= MAX_NODES)
-    		{
-    			break;
+    			{
+    				weight = oldEdges[i].weightBA;
+    				addNode(newNodes, oldEdges[i].node1, weight);
+    			}
     		}
     	}
     	
-    	while (newNodes.size() < MAX_NODES)
+    	//Continue until every node has been accounted for
+    	while (newNodes.size() < oldNodes.length)
     	{
-    		for (int i = 1; i < newNodes.size() && newNodes.size() < MAX_NODES; i++)
+    		for (int i = traversed; i < newNodes.size() && newNodes.size() < oldNodes.length; i++)
     		{
     			temp = newNodes.get(i);
     			for (int j = 0; j < oldEdges.length; j++)
@@ -164,19 +223,36 @@ public class DisplayPane extends JPanel {
 	    			if (oldEdges[j].hasNode(temp))
 	        		{
 	        			if (oldEdges[j].node1 == temp && oldEdges[j].weightAB > MIN_WEIGHT)
-	        				addNode(newNodes, oldEdges[j].node2);
+	        			{
+	        				weight = oldEdges[j].weightAB * temp.getWeight();
+	        				addNode(newNodes, oldEdges[j].node2, weight);
+	        			}
 	        			else if (oldEdges[j].node2 == temp && oldEdges[j].weightBA > MIN_WEIGHT)
-	        				addNode(newNodes, oldEdges[j].node1);
+	        			{
+	        				weight = oldEdges[j].weightBA * temp.getWeight();
+	        				addNode(newNodes, oldEdges[j].node1, weight);
+	        			}
 	        		}
-	        		if (newNodes.size() >= MAX_NODES)
+	        		if (newNodes.size() >= oldNodes.length)
 	        		{
 	        			break;
 	        		}
     			}
+    			//Avoids repeating nodes that have already been checked
+    			traversed++;
     		}
     	}
     	
-    	usedNodes = new Node[newNodes.size()];
+    	newNodes = sortNodes(newNodes);
+    	
+    	if (newNodes.size() > MAX_NODES)
+    	{
+    		newNodes = newNodes.subList(0, MAX_NODES);
+    		usedNodes = new Node[MAX_NODES];
+    	}
+    	else
+    		usedNodes = new Node[newNodes.size()];
+    	
     	usedNodes = newNodes.toArray(usedNodes);
     	return usedNodes;
     }
