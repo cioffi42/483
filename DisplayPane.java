@@ -38,7 +38,8 @@ public class DisplayPane extends JPanel {
     
     //Used to determine which nodes get displayed
     private static final int MAX_NODES = 11;
-    private static final double MIN_WEIGHT = 0.01;
+    private static final double MIN_WEIGHT = 0.3;
+    private static final double DECAY = 0.8;
     
     private static Node focusNode = null;
     public static Node hoverNode = null;
@@ -224,12 +225,12 @@ public class DisplayPane extends JPanel {
 	        		{
 	        			if (oldEdges[j].node1 == temp && oldEdges[j].weightAB > MIN_WEIGHT)
 	        			{
-	        				weight = oldEdges[j].weightAB * temp.getWeight();
+	        				weight = (oldEdges[j].weightAB * temp.getWeight() * DECAY);
 	        				addNode(newNodes, oldEdges[j].node2, weight);
 	        			}
 	        			else if (oldEdges[j].node2 == temp && oldEdges[j].weightBA > MIN_WEIGHT)
 	        			{
-	        				weight = oldEdges[j].weightBA * temp.getWeight();
+	        				weight = (oldEdges[j].weightBA * temp.getWeight() * DECAY);
 	        				addNode(newNodes, oldEdges[j].node1, weight);
 	        			}
 	        		}
