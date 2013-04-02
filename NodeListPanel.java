@@ -105,7 +105,7 @@ public class NodeListPanel extends JPanel implements ListSelectionListener
             String nodename = list.getSelectedValue().toString();
             Node node = MainApplet.findNodeByName(nodename);
             if (node != null){
-                MainApplet.displayPane.setFocusNode(node);
+                MainApplet.displayPane.setFocusNode(node,true);
             }
             
         }
