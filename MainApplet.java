@@ -46,8 +46,8 @@ public class MainApplet extends JApplet {
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
         tabbedPane.addTab("Tags", icon,  tagListPane,
-                          "Specail tags");
-       tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+                          "Special tags");
+        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
         
         
         infoPane.add(sidePane, BorderLayout.CENTER);
@@ -67,16 +67,16 @@ public class MainApplet extends JApplet {
                 public void propertyChange(PropertyChangeEvent event) {
                     validate();
                     // This code will be executed whenever the slider moves
-                    displayPane.setFocusNode(displayPane.getFocusNode());
+                    displayPane.setFocusNode(displayPane.getFocusNode(), true);
                 }
             }
         );
         
         validate();
-        displayPane.setFocusNode(nodes[0]);
+        displayPane.setFocusNode(nodes[0], true);
         
         
-      //  sidePane.connect();
+        sidePane.connect();
         
         
         // This is for testing purposes only

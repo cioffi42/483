@@ -6,13 +6,9 @@ public class Repair {
     
     public static void repair(Graph graph){
         
-        System.out.println("-- Repair function start --\n");
-        System.out.printf("Before Repair: %.3f\n", new Rating(graph).overallRating);
-        
         if (new Rating(graph).isUnacceptable()) {
             // Start tweaking the nodes to improve the graph's Rating
             moveAllNodes(graph, SMALL_INCREMENT);
-            System.out.printf("After first repair: %.3f\n", new Rating(graph).overallRating);
         }
         
         // If the graph is still bad, then we need to keep repairing
@@ -26,8 +22,6 @@ public class Repair {
                 //graph.setBorder(scalar, scalar);
             }
         }
-        
-        System.out.println();
     }
     
     private static void moveAllNodes(Graph graph, int increment){

@@ -16,6 +16,8 @@ public class Parser {
 			while (sc.hasNextLine()){
 				String line = sc.nextLine();
 				String[] entries = line.split(",");
+				entries[0] = Text.applyUnicodeCharacters(entries[0]);
+				entries[3] = Text.applyUnicodeCharacters(entries[3]);
 				Node nodeA = search(nodes, entries[0]);
 				if (nodeA == null){
 					nodeA = new Node("", entries[0], "");
@@ -26,7 +28,7 @@ public class Parser {
 					nodeB = new Node("", entries[3], "");
 					nodes.add(nodeB);
 				}
-				edges.add(new Edge(Double.parseDouble(entries[1]), Double.parseDouble(entries[2]), nodeA, nodeB));
+				edges.add(new Edge(Double.parseDouble(entries[2]), Double.parseDouble(entries[1]), nodeA, nodeB));
 			}
 			
 			MainApplet.nodes = new Node[nodes.size()];

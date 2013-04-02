@@ -2,12 +2,18 @@ import javax.swing.*;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
+import java.text.AttributedString;
 import java.util.*;
 
 import javax.imageio.ImageIO;
+
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -70,7 +76,7 @@ public class DisplayPane extends JPanel {
         return focusNode;
     }
     
-    public void setFocusNode(Node focus){
+    public void setFocusNode(Node focus, boolean doAnimation){
         focusNode = focus;
         hoverNode = null;
         offsetX = offsetY = 0;
@@ -90,12 +96,14 @@ public class DisplayPane extends JPanel {
         Edge[] usedEdges = new Edge[newEdges.size()];
         usedEdges = newEdges.toArray(usedEdges);
         
-        // Record the old positions of nodes (for animations)
-        for (Node node : nodes){
-            if (node.getCenter() == null || graph == null || MathUtils.search(graph.nodes, node) == -1){
-                node.setCenter(new Point(getWidth()/2,getHeight()/2));
+        if (doAnimation) {
+            // Record the old positions of nodes (for animations)
+            for (Node node : nodes) {
+                if (node.getCenter() == null || graph == null || MathUtils.search(graph.nodes, node) == -1) {
+                    node.setCenter(new Point(getWidth() / 2, getHeight() / 2));
+                }
+                node.oldCenter = new Point(node.getCenter().x, node.getCenter().y);
             }
-            node.oldCenter = new Point(node.getCenter().x, node.getCenter().y);
         }
         
         // Generate the graph
@@ -103,13 +111,14 @@ public class DisplayPane extends JPanel {
         Repair.repair(graph);
         setGraph(graph);
         
-        // Record the new positions of nodes (for animations)
-        for (Node node : nodes){
-            node.newCenter = new Point(node.getCenter().x, node.getCenter().y);
+        if (doAnimation){
+            // Record the new positions of nodes (for animations)
+            for (Node node : nodes){
+                node.newCenter = new Point(node.getCenter().x, node.getCenter().y);
+            }
+            // Execute animation
+            (new Animation(nodes)).start();
         }
-        
-        // Execute animation
-        (new Animation(nodes)).start();
     }
     
     // We need to avoid having nodes added to a list more than once
@@ -220,14 +229,60 @@ public class DisplayPane extends JPanel {
         g.drawImage(imageToDraw, (int)xCenter - imgWidth/2, (int)yCenter - imgHeight/2, null);
     }
     
-    //problem with text color and "red color mouse over feature"
+    private static final int MAX_STRING_WIDTH = 150;
+    private static final int MAX_STRING_WIDTH_TWO_LINES = 135;
+    
+    private void drawText(Graphics g, String name, double xCenter, double yCenter){
+        int x, y;
+        
+        // Set the font
+        g.setColor(DEFAULT_NODE_COLOR);
+        Font font = new Font(g.getFont().getFamily(), Font.BOLD, 14);
+        g.setFont(font);
+        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        
+        // Create the attributed string (which handles subscripts/superscripts)
+        AttributedString attributedName = Text.applyStringStyles(name);
+        int length = attributedName.getIterator().getEndIndex();
+        
+        // Get the dimensions of the string
+        FontMetrics metrics = getFontMetrics(font);
+        Rectangle2D box = metrics.getStringBounds(attributedName.getIterator(), 0, length, g);
+        int width = (int)box.getWidth();
+        int height = (int)box.getHeight();
+        
+        if (width < MAX_STRING_WIDTH){
+            x = (int)(xCenter - 0.5*width);
+            y = (int)(yCenter + 0.3*height);
+            g.drawString(attributedName.getIterator(), x, y);
+        } else {
+            int spaceIndex = name.length();
+            while ((spaceIndex = name.lastIndexOf(' ', spaceIndex-1)) != -1){
+                AttributedString firstAs = Text.applyStringStyles(name.substring(0, spaceIndex));
+                int firstAsLength = firstAs.getIterator().getEndIndex();
+                int firstWidth = (int)metrics.getStringBounds(firstAs.getIterator(), 0, firstAsLength, g).getWidth();
+                if (firstWidth < MAX_STRING_WIDTH_TWO_LINES){
+                    x = (int)(xCenter - 0.5*firstWidth);
+                    y = (int)(yCenter - 0.2*height);
+                    g.drawString(firstAs.getIterator(), x, y);
+                    AttributedString secondAs = Text.applyStringStyles(name.substring(spaceIndex+1));
+                    int secondAsLength = secondAs.getIterator().getEndIndex();
+                    int secondWidth = (int)metrics.getStringBounds(secondAs.getIterator(), 0, secondAsLength, g).getWidth();
+                    x = (int)(xCenter - 0.5*secondWidth);
+                    y = (int)(yCenter + 0.8*height);
+                    g.drawString(name.substring(spaceIndex+1), x, y);
+                    break;
+                }
+            }
+        }
+    }
+    
     //problem when using a node.getName() that is NULL, error check for this
     //need to manage it so words don't get cut in half by a new line
     //not centered correctly
-    private void drawText(Graphics g, String name, double xCenter, double yCenter)
+    private void drawText2(Graphics g, String name, double xCenter, double yCenter)
     {
-    	//name = "Insert This Node's Name Here";							//warning, it doesn't take the node's real name
-		int length = name.length();
+        int length = name.length();
 		int nRows = length/15 + 1;     //15 in constant here, should be variable
 		int rLength = length/nRows;
 		ArrayList<String> substrings = new ArrayList<String>();
@@ -249,9 +304,10 @@ public class DisplayPane extends JPanel {
 		}
 		
 		g.setColor(DEFAULT_NODE_COLOR);
+		g.setFont(new Font(g.getFont().getFamily(), Font.BOLD, 14));
 		for (int i = 0; i < nRows; i++) 
 		{
-			int rowheight = imgHeight/(nRows + 1);
+		    int rowheight = imgHeight/(nRows + 1);
 			int rowposition = (int)yCenter - imgHeight/2 + rowheight*(i + 1) + 3;				//added plus 3 for offset, possibly from font size, hater's go'n hate
 			g.drawString(substrings.get(i), (int)xCenter - (int)(length*1.6), rowposition); 	//was expecting length/2 but *1.6 did the trick o.O, what am i missing?
 																								//this will have toe change everytime we change font size

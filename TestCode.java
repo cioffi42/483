@@ -38,7 +38,7 @@ public class TestCode {
         String[] results = new String[MainApplet.nodes.length];
         for (int i=0; i<MainApplet.nodes.length; i++){
             Node node = MainApplet.nodes[i];
-            MainApplet.displayPane.setFocusNode(node);
+            MainApplet.displayPane.setFocusNode(node, false);
             double rating = new Rating(MainApplet.displayPane.getGraph()).overallRating;
             results[i] = String.format("%.3f", rating) + ": " + node.getName();
         }

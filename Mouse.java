@@ -1,50 +1,69 @@
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
+import java.util.Date;
 
 import javax.swing.event.MouseInputAdapter;
 
 public class Mouse extends MouseInputAdapter {
-    
-    private int startX, startY, originalOffsetX, originalOffsetY;
-    private boolean isDragged = false;
-    
+
+    private int startX, startY, curX, curY, prevX, prevY;
+
+    // The node being clicked or dragged
+    private Node targetNode = null;
+
+    private Date dragStartTime = null;
+
     @Override
     public void mousePressed(MouseEvent event){
         Node node = MainApplet.displayPane.getMouseNode(event.getX(), event.getY());
         if (node != null){
-            // User clicked on a node
-            if (node != MainApplet.displayPane.getFocusNode()){
-                MainApplet.displayPane.setFocusNode(node);
-            }
-        } else {
-            // User clicked on anything but a node
-            startX = event.getX();
-            startY = event.getY();
-            originalOffsetX = MainApplet.displayPane.offsetX;
-            originalOffsetY = MainApplet.displayPane.offsetY;
-            isDragged = true;
+            // User pressed mouse button down on a node
+            targetNode = node;
+            dragStartTime = new Date();
+            startX = curX = prevX = event.getX();
+            startY = curY = prevY = event.getY();
         }
     }
-    
+
     @Override
     public void mouseDragged(MouseEvent event){
-        if (isDragged){
-            MainApplet.displayPane.setOffset(originalOffsetX + startX-event.getX(), originalOffsetY + startY-event.getY());
+        if (targetNode != null){
+            prevX = curX;
+            prevY = curY;
+            curX = event.getX();
+            curY = event.getY();
+            targetNode.getCenter().x += (curX - prevX);
+            targetNode.getCenter().y += (curY - prevY);
             MainApplet.displayPane.repaint();
         }
     }
-    
+
     @Override
     public void mouseReleased(MouseEvent event){
-        isDragged = false;
+        if (targetNode != null && dragStartTime != null) {
+            // Determine if this was a mouse click, based on the distance the 
+            // mouse moved, and how long the click lasted
+            double distance = MathUtils.dist(new Point(startX, startY), new Point(curX, curY));
+            long timeElapsedMillisecs = new Date().getTime() - dragStartTime.getTime();
+            boolean isClick = (distance < 1.0 || (distance < 40.0 && timeElapsedMillisecs < 100));
+            //System.out.println(distance + "\n" + timeElapsedMillisecs);
+            if (isClick) {
+                if (targetNode != MainApplet.displayPane.getFocusNode()) {
+                    // User clicked on a node, so set the focus node
+                    MainApplet.displayPane.setFocusNode(targetNode, true);
+                }
+            }
+        }
+        targetNode = null;
+        dragStartTime = null;
     }
-    
+
     @Override
     public void mouseMoved(MouseEvent event){
         Node node = MainApplet.displayPane.getMouseNode(event.getX(), event.getY());
         int cursor = (node != null) ? Cursor.HAND_CURSOR : Cursor.DEFAULT_CURSOR;
         MainApplet.displayPane.setCursor(Cursor.getPredefinedCursor(cursor));
-        if (DisplayPane.hoverNode != node){
+        if (DisplayPane.hoverNode != node) {
             // We need to update the hover node (which can be null)
             DisplayPane.hoverNode = node;
             MainApplet.displayPane.repaint();
