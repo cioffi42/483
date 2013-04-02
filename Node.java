@@ -1,4 +1,3 @@
-
 // TODO: these getters/setters aren't doing anything, so either 
 // add something to them, or get rid of them
 
@@ -8,6 +7,7 @@ public class Node implements Comparable<Node>
     private String name;
     private String description;
     private Point center;
+    private double weight;
     
     // This is used for animations
     public Point oldCenter;
@@ -17,6 +17,7 @@ public class Node implements Comparable<Node>
 	// testing purposes
 	public Node(){
         this.id = this.name = this.description = null;
+        this.weight = 0;
     }
     
     public Node(String id, String name, String description)
@@ -24,6 +25,7 @@ public class Node implements Comparable<Node>
         this.id = id;
         this.name = name;
         this.description = description;
+        this.weight = 0;
     }
 	
 	public Point getCenter()
@@ -54,6 +56,16 @@ public class Node implements Comparable<Node>
     public void setName(String newName)
     {
         name = newName;
+    }
+    
+    public double getWeight()
+    {
+        return weight;
+    }
+    
+    public void setWeight(double newWeight)
+    {
+        weight = newWeight;
     }
     
     public String getDescription()
