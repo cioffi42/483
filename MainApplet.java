@@ -77,7 +77,13 @@ public class MainApplet extends JApplet {
         
         
         sidePane.connect();
-        
+        final String path1 =  getCodeBase().toString();
+        sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                sidePane.getBrowser().setUrl(path1+"VELOCITY.htm");
+            }
+        });
         
         // This is for testing purposes only
         /*String[] tests = TestCode.tryAllGraphs();
