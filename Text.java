@@ -1,8 +1,4 @@
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.font.TextAttribute;
-import java.text.AttributedCharacterIterator.Attribute;
-import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,19 +30,6 @@ public class Text {
             }
         }
         return sb.toString();
-    }
-    
-    public static String[] splitString(Graphics g, FontMetrics metrics, String text, int nRows){
-        String[] strings = new String[nRows];
-        StringBuilder sb = new StringBuilder();
-        if (nRows == 2){
-            String[] words = text.split(" ");
-            for (int i=0; i<words.length; i++){
-                sb.append(words[i]);
-                int width = (int)metrics.getStringBounds(text, g).getWidth();
-            }
-        }
-        return strings;
     }
     
     public static AttributedString applyStringStyles(String text){

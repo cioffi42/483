@@ -23,7 +23,7 @@ public class DisplayPane extends JPanel {
     private static final long serialVersionUID = 1L;
     private Graph graph;
     private static final Color DEFAULT_NODE_COLOR = Color.BLACK;
-    private static final Color FOCUS_NODE_COLOR = Color.RED;
+    private static final Color HOVER_NODE_COLOR = new Color(0, 84, 255);
     private static BufferedImage image;
     private static BufferedImage focusNodeImage;
     
@@ -53,8 +53,8 @@ public class DisplayPane extends JPanel {
         addMouseMotionListener(mouse);
     	try
     	{
-    		image = ImageIO.read(new File("NewNode.gif"));
-    		focusNodeImage = ImageIO.read(new File("SelectedNode.gif"));
+    		image = ImageIO.read(new File("NewNode.png"));
+    		focusNodeImage = ImageIO.read(new File("SelectedNode.png"));
     		imgHeight = image.getHeight();
     		imgWidth = image.getWidth();
     	}
@@ -78,6 +78,13 @@ public class DisplayPane extends JPanel {
     }
     
     public void setFocusNode(Node focus, boolean doAnimation){
+        
+        // If an animation is running, DON'T let the user set a new focus node
+        // until the animation is complete.
+        if (Animation.isRunning){
+            return;
+        }
+        
         focusNode = focus;
         hoverNode = null;
         offsetX = offsetY = 0;
@@ -264,13 +271,17 @@ public class DisplayPane extends JPanel {
     	Node node;
     	Edge edge;
     	
+    	// Make the edges and text look less jagged
+    	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    	g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    	
         //Display Graph connections
-        g2.setStroke(new BasicStroke(10));
+        g2.setStroke(new BasicStroke(5));
         for (int i = 0; i < graph.edges.length; i++)
         {
             edge = graph.edges[i];
             if (edge.node1 == hoverNode || edge.node2 == hoverNode){
-                g2.setColor(FOCUS_NODE_COLOR);
+                g2.setColor(HOVER_NODE_COLOR);
             } else {
                 g2.setColor(DEFAULT_NODE_COLOR);
             }
@@ -287,7 +298,7 @@ public class DisplayPane extends JPanel {
         	node = graph.nodes[i];
         	boolean drawNodeInColor = (node == hoverNode || node == focusNode);
         	drawCircle(g, node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY, drawNodeInColor);
-        	drawText(g, node.getName(), node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY);
+        	drawText(g2, node.getName(), node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY);
         }
         
     }
@@ -309,14 +320,13 @@ public class DisplayPane extends JPanel {
     private static final int MAX_STRING_WIDTH = 150;
     private static final int MAX_STRING_WIDTH_TWO_LINES = 135;
     
-    private void drawText(Graphics g, String name, double xCenter, double yCenter){
+    private void drawText(Graphics2D g2, String name, double xCenter, double yCenter){
         int x, y;
         
         // Set the font
-        g.setColor(DEFAULT_NODE_COLOR);
-        Font font = new Font(g.getFont().getFamily(), Font.BOLD, 14);
-        g.setFont(font);
-        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setColor(DEFAULT_NODE_COLOR);
+        Font font = new Font(g2.getFont().getFamily(), Font.BOLD, 14);
+        g2.setFont(font);
         
         // Create the attributed string (which handles subscripts/superscripts)
         AttributedString attributedName = Text.applyStringStyles(name);
@@ -324,34 +334,57 @@ public class DisplayPane extends JPanel {
         
         // Get the dimensions of the string
         FontMetrics metrics = getFontMetrics(font);
-        Rectangle2D box = metrics.getStringBounds(attributedName.getIterator(), 0, length, g);
+        Rectangle2D box = metrics.getStringBounds(attributedName.getIterator(), 0, length, g2);
         int width = (int)box.getWidth();
         int height = (int)box.getHeight();
         
         if (width < MAX_STRING_WIDTH){
+            // We can fit the text on one line, so draw it
             x = (int)(xCenter - 0.5*width);
             y = (int)(yCenter + 0.3*height);
-            g.drawString(attributedName.getIterator(), x, y);
+            g2.drawString(attributedName.getIterator(), x, y);
         } else {
-            int spaceIndex = name.length();
-            while ((spaceIndex = name.lastIndexOf(' ', spaceIndex-1)) != -1){
-                AttributedString firstAs = Text.applyStringStyles(name.substring(0, spaceIndex));
-                int firstAsLength = firstAs.getIterator().getEndIndex();
-                int firstWidth = (int)metrics.getStringBounds(firstAs.getIterator(), 0, firstAsLength, g).getWidth();
-                if (firstWidth < MAX_STRING_WIDTH_TWO_LINES){
-                    x = (int)(xCenter - 0.5*firstWidth);
-                    y = (int)(yCenter - 0.2*height);
-                    g.drawString(firstAs.getIterator(), x, y);
-                    AttributedString secondAs = Text.applyStringStyles(name.substring(spaceIndex+1));
-                    int secondAsLength = secondAs.getIterator().getEndIndex();
-                    int secondWidth = (int)metrics.getStringBounds(secondAs.getIterator(), 0, secondAsLength, g).getWidth();
-                    x = (int)(xCenter - 0.5*secondWidth);
-                    y = (int)(yCenter + 0.8*height);
-                    g.drawString(name.substring(spaceIndex+1), x, y);
-                    break;
+            // We need to try drawing the text on two separate lines
+            AttributedString[] twoLines = null;
+            int colonIndex = name.indexOf(':');
+            if (colonIndex != -1){
+                // There is a ':' in the text, so we should try splitting the text based on the ':' position
+                twoLines = splitTextTwoLines(metrics, g2, name, colonIndex);
+            }
+            if (twoLines == null){
+                // We still haven't split the text into two lines, so try splitting at various space characters
+                int spaceIndex = name.length();
+                while ((twoLines == null) && (spaceIndex = name.lastIndexOf(' ', spaceIndex-1)) != -1){
+                    twoLines = splitTextTwoLines(metrics, g2, name, spaceIndex);
                 }
             }
+            if (twoLines != null){
+                int firstAsLength = twoLines[0].getIterator().getEndIndex();
+                int firstWidth = (int)metrics.getStringBounds(twoLines[0].getIterator(), 0, firstAsLength, g2).getWidth();
+                x = (int)(xCenter - 0.5*firstWidth);
+                y = (int)(yCenter - 0.2*height);
+                g2.drawString(twoLines[0].getIterator(), x, y);
+                int secondAsLength = twoLines[1].getIterator().getEndIndex();
+                int secondWidth = (int)metrics.getStringBounds(twoLines[1].getIterator(), 0, secondAsLength, g2).getWidth();
+                x = (int)(xCenter - 0.5*secondWidth);
+                y = (int)(yCenter + 0.8*height);
+                g2.drawString(twoLines[1].getIterator(), x, y);
+            }
         }
+    }
+    
+    // Tries to split the given string at the splitIndex into two AttributedString objects that fit in the node.
+    // Returns array of two AttributedString objects if successful, null if it couldn't fit.
+    private AttributedString[] splitTextTwoLines(FontMetrics metrics, Graphics2D g2, String name, int splitIndex){
+        AttributedString firstAs = Text.applyStringStyles(name.substring(0, splitIndex+1));
+        int firstAsLength = firstAs.getIterator().getEndIndex();
+        int firstWidth = (int)metrics.getStringBounds(firstAs.getIterator(), 0, firstAsLength, g2).getWidth();
+        if (firstWidth < MAX_STRING_WIDTH_TWO_LINES){
+            AttributedString secondAs = Text.applyStringStyles(name.substring(splitIndex+1));
+            AttributedString[] twoLines = {firstAs, secondAs};
+            return twoLines;
+        }
+        return null;
     }
     
     //problem when using a node.getName() that is NULL, error check for this
