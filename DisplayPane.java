@@ -23,9 +23,10 @@ public class DisplayPane extends JPanel {
     private static final long serialVersionUID = 1L;
     private Graph graph;
     private static final Color DEFAULT_NODE_COLOR = Color.BLACK;
-    private static final Color HOVER_NODE_COLOR = new Color(0, 84, 255);
-    private static BufferedImage image;
+    private static final Color HOVER_NODE_COLOR = new Color(62, 194, 255);
+    private static BufferedImage regularNodeImage;
     private static BufferedImage focusNodeImage;
+    private static BufferedImage hoverNodeImage;
     
     private Graphics bufferGraphics;
     private Image bufferImage;
@@ -53,10 +54,11 @@ public class DisplayPane extends JPanel {
         addMouseMotionListener(mouse);
     	try
     	{
-    		image = ImageIO.read(new File("NewNode.png"));
-    		focusNodeImage = ImageIO.read(new File("SelectedNode.png"));
-    		imgHeight = image.getHeight();
-    		imgWidth = image.getWidth();
+    		regularNodeImage = ImageIO.read(new File("newnode.png"));
+    		focusNodeImage = ImageIO.read(new File("focusnode.png"));
+    		hoverNodeImage = ImageIO.read(new File("selectednode.png"));
+    		imgHeight = regularNodeImage.getHeight();
+    		imgWidth = regularNodeImage.getWidth();
     	}
     	catch (IOException e)
     	{
@@ -296,8 +298,15 @@ public class DisplayPane extends JPanel {
         for (int i = 0; i < graph.nodes.length; i++)
         {
         	node = graph.nodes[i];
-        	boolean drawNodeInColor = (node == hoverNode || node == focusNode);
-        	drawCircle(g, node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY, drawNodeInColor);
+        	BufferedImage imageToDraw;
+        	if (node == hoverNode){
+        	    imageToDraw = hoverNodeImage;
+        	} else if (node == focusNode){
+        	    imageToDraw = focusNodeImage;
+        	} else {
+        	    imageToDraw = regularNodeImage;
+        	}
+        	drawCircle(g, node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY, imageToDraw);
         	drawText(g2, node.getName(), node.getCenter().getX() - offsetX, node.getCenter().getY() - offsetY);
         }
         
@@ -311,9 +320,7 @@ public class DisplayPane extends JPanel {
     	this.graph = graph;
     }
     
-    private static void drawCircle(Graphics g, double xCenter, double yCenter, boolean isFocusNode){
-        //g.fillOval((int)xCenter-r, (int)yCenter-r, 2*r, 2*r);
-        BufferedImage imageToDraw = isFocusNode ? focusNodeImage : image;
+    private static void drawCircle(Graphics g, double xCenter, double yCenter, BufferedImage imageToDraw){
         g.drawImage(imageToDraw, (int)xCenter - imgWidth/2, (int)yCenter - imgHeight/2, null);
     }
     
