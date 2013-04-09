@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class NodeListPanel extends JPanel implements ListSelectionListener
 {
@@ -41,7 +42,12 @@ public class NodeListPanel extends JPanel implements ListSelectionListener
             	nodearray[i] = MainApplet.tags[i];
              }
         }
-        Arrays.sort(nodearray);
+        Arrays.sort(nodearray, new Comparator<String>(){
+            @Override
+            public int compare(String first, String second) {
+                return first.compareToIgnoreCase(second);
+            }
+        });
  
         listModel = new DefaultListModel();
         

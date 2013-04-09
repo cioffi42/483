@@ -39,7 +39,6 @@ public class DisplayPane extends JPanel {
     
     //Used to determine which nodes get displayed
     private static final int MAX_NODES = 11;
-    private static final double MIN_WEIGHT = 0.3;
     private static final double DECAY = 0.8;
     
     private static Node focusNode = null;
@@ -200,47 +199,31 @@ public class DisplayPane extends JPanel {
     	List<Node> newNodes = new ArrayList<Node>();
     	Node temp;
     	double weight;
-    	int traversed = 1;
+    	int traversed = 0;
     	
     	newNodes.add(focus);
     	newNodes.get(0).setWeight(1.0);
     	
-    	for (int i = 0; i < oldEdges.length; i++)
-    	{
-    		if (oldEdges[i].hasNode(focus))
-    		{
-    			if (oldEdges[i].node1 == focus && oldEdges[i].weightAB > MIN_WEIGHT)
-    			{
-    				weight = oldEdges[i].weightAB;
-    				addNode(newNodes, oldEdges[i].node2, weight);
-    			}
-    			else if (oldEdges[i].node2 == focus && oldEdges[i].weightBA > MIN_WEIGHT)
-    			{
-    				weight = oldEdges[i].weightBA;
-    				addNode(newNodes, oldEdges[i].node1, weight);
-    			}
-    		}
-    	}
-    	
     	//Continue until every node has been accounted for
     	while (newNodes.size() < oldNodes.length)
     	{
-    		for (int i = traversed; i < newNodes.size() && newNodes.size() < oldNodes.length; i++)
+    		int oldSize = newNodes.size();
+    	    for (int i = traversed; i < newNodes.size() && newNodes.size() < oldNodes.length; i++)
     		{
     			temp = newNodes.get(i);
     			for (int j = 0; j < oldEdges.length; j++)
     			{
 	    			if (oldEdges[j].hasNode(temp))
 	        		{
-	        			if (oldEdges[j].node1 == temp && oldEdges[j].weightAB > MIN_WEIGHT)
+	        			if (oldEdges[j].node1 == temp)
 	        			{
 	        				weight = (oldEdges[j].weightAB * temp.getWeight() * DECAY);
-	        				addNode(newNodes, oldEdges[j].node2, weight);
+                            addNode(newNodes, oldEdges[j].node2, weight);
 	        			}
-	        			else if (oldEdges[j].node2 == temp && oldEdges[j].weightBA > MIN_WEIGHT)
+	        			else if (oldEdges[j].node2 == temp)
 	        			{
 	        				weight = (oldEdges[j].weightBA * temp.getWeight() * DECAY);
-	        				addNode(newNodes, oldEdges[j].node1, weight);
+                            addNode(newNodes, oldEdges[j].node1, weight);
 	        			}
 	        		}
 	        		if (newNodes.size() >= oldNodes.length)
@@ -251,6 +234,12 @@ public class DisplayPane extends JPanel {
     			//Avoids repeating nodes that have already been checked
     			traversed++;
     		}
+    	    
+    	    // If we didn't add any new nodes this iteration, then 
+    	    // stop. This keeps us from getting stuck in the while loop.
+    	    if (newNodes.size() == oldSize){
+    	        break;
+    	    }
     	}
     	
     	newNodes = sortNodes(newNodes);
@@ -446,8 +435,8 @@ public class DisplayPane extends JPanel {
     
     public Node getMouseNode(int x, int y){
         for (Node node : graph.nodes){
-            double scaledX = (x - (node.getCenter().getX()-offsetX)) / (imgWidth/2);
-            double scaledY = (y - (node.getCenter().getY()-offsetY)) / (imgHeight/2);
+            double scaledX = (x - (node.getCenter().getX()-offsetX)) / (0.9*imgWidth/2);
+            double scaledY = (y - (node.getCenter().getY()-offsetY)) / (0.8*imgHeight/2);
             if (scaledX*scaledX + scaledY*scaledY <= 1.0){
                 return node;
             }

@@ -11,14 +11,23 @@ public class Spectral {
         
         Graph graph = new Graph(nodes, edges);
         
-        // Get eigenvectors
-        EigenvalueDecomposition ed = new EigenvalueDecomposition(graph.matrix);
-        
-        // Create Graph object
         int width = MainApplet.displayPane.getWidth();
         int height = MainApplet.displayPane.getHeight();
-        for (int i=0; i<graph.nodes.length; i++){
-            graph.nodes[i].setCenter(scale(new Point(ed.V[i][1], ed.V[i][2]), width, height));
+        
+        // If there are 2 or fewer nodes, then don't run Spectral algorithm
+        if (nodes.length == 1){
+            nodes[0].setCenter(scale(new Point(0,0), width, height));
+        } else if (nodes.length == 2){
+            nodes[0].setCenter(scale(new Point(-0.5, 0), width, height));
+            nodes[1].setCenter(scale(new Point(0.5, 0), width, height));
+        } else {
+            // Get eigenvectors
+            EigenvalueDecomposition ed = new EigenvalueDecomposition(graph.matrix);
+            
+            // Set points for nodes
+            for (int i=0; i<graph.nodes.length; i++){
+                graph.nodes[i].setCenter(scale(new Point(ed.V[i][1], ed.V[i][2]), width, height));
+            }
         }
         
         return graph;
