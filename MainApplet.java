@@ -78,9 +78,49 @@ public class MainApplet extends JApplet {
         sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
             @Override
             public void run() {
-                sidePane.getBrowser().setUrl(path1+"VELOCITY.htm");
+                sidePane.getBrowser().setUrl(path1+"VELOCITY.html");
+                sidePane.getBrowser().execute("var y = document.getElementsByTagName(\"h1\")[0]; " +
+                		"while(y){ 	"+
+                		"    if(y.nodeName.toLowerCase() == \"p\"  ||  y.nodeName.toLowerCase() == \"h1\"  ){"+
+                				"y.style.display = 'none';" +
+                			"}"+
+                		"    y = y.nextSibling;" +
+                		"}");
+                
+                
+                
+               
+                		
+               
             }
         });
+        
+        if (false){   // This is the script to display the corrent info for a node, with
+        			 // nodeName being  a string of that node
+        		     // this probably needs to be run in a thread
+        	String nodeName = "VELOCITY" ;
+        			
+				        sidePane.getBrowser().execute("var y = document.getElementsByTagName(\"h1\")[0];"+
+				        "var found = false;"+
+				        "while(y){ "+
+				           " if(y.nodeName.toLowerCase() == \"h1\"   && y.textContent ==\" "+nodeName+" \" && found == false){"+
+				               	   "found = true;"+
+				        	   "y.style.display = 'block'; "+ 
+				        	"}"+
+				           "else if (found == true && y.nodeName.toLowerCase() == \"p\"){"+
+				        	 
+				        	  " y.style.display = 'block';"+
+				               " }"+
+				          
+				           "else if (found == true && y.nodeName.toLowerCase() == \"h1\"){"+
+				        		"break;"+
+				        	"}"+
+				           "else{}"+
+				           " y = y.nextSibling;"+
+				        "}");
+        
+        }
+        
         
         // This is for testing purposes only
         /*String[] tests = TestCode.tryAllGraphs();
