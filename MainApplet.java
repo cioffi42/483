@@ -23,7 +23,7 @@ public class MainApplet extends JApplet {
     public static Node[] nodes;
     public static Edge[] edges;
     public static String [] tags = {"Midterm 1","Midterm 2","Final"}; 
-    
+    public static boolean initialize = false;
     @Override
     public void init(){
     	
@@ -65,15 +65,18 @@ public class MainApplet extends JApplet {
                     validate();
                     // This code will be executed whenever the slider moves
                     displayPane.setFocusNode(displayPane.getFocusNode(), true);
+                    System.out.println("hello");
+                    
                 }
             }
         );
         
         validate();
-        displayPane.setFocusNode(nodes[0], false);
         
         
         sidePane.connect();
+       
+        
         final String path1 =  getCodeBase().toString();
         sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
             @Override
@@ -85,6 +88,7 @@ public class MainApplet extends JApplet {
             }
         });
      
+<<<<<<< HEAD
         sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
             @Override
             public void run() {
@@ -131,6 +135,18 @@ public class MainApplet extends JApplet {
                 
             }
         });
+=======
+        clearPanel();
+        
+        
+        displayPane.setFocusNode(nodes[0], false);
+        
+        
+       
+     
+        
+        
+>>>>>>> new javascript changes and stuff
         
         
         
@@ -141,7 +157,67 @@ public class MainApplet extends JApplet {
             System.out.println(result);
         }*/
     }
-
+    public static void clearPanel(){
+    	
+    	
+    	sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+            	sidePane.getBrowser().execute("var y = document.getElementsByTagName(\"h1\")[0]; " +
+                		"while(y){ 	"+
+                		"    if(y.nodeName.toLowerCase() == \"p\"  ||  y.nodeName.toLowerCase() == \"h1\"  ){"+
+                				"y.style.display = 'none';" +
+                		"	}							  "+
+                		"    y = y.nextSibling;			  " +
+                		"}								  ");
+                
+            }
+        });
+    	initialize = true;
+    }
+    
+    public static void updatePanel (){
+    	
+    		clearPanel();
+    	
+    	
+    	sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                
+            	String nodeName = displayPane.getFocusNode().getName();
+            	
+    			
+				   sidePane.getBrowser().execute(""+
+						   
+				  "var y = document.getElementsByTagName(\"h1\")[0];"+
+				  " var found = false;"+
+				  "while(y){ "+
+				  "   if(y.nodeName.toLowerCase() == \"h1\"   && y.textContent ==\""+nodeName+"\" && found == false){"+
+				  "       	   found = true;"+
+				  " 	   y.style.display = 'block';"+  
+				  "	}"+
+				  "    else if (found == true && y.nodeName.toLowerCase() == \"p\"){"+
+				   	 
+				  " 	   y.style.display = 'block';"+
+				  "        }"+
+				     
+				  "    else if (found == true && y.nodeName.toLowerCase() == \"h1\"){"+
+				  " 		break;"+
+				  "	}"+
+				  "    else{}"+
+				       
+				      
+				      " y = y.nextSibling;"+
+				   "}"+
+				   
+				   "");
+                
+            }
+        });
+    
+    }
+    
 	public static Node findNodeByName(String name){
         for (int i=0; i<nodes.length; i++){
             if (nodes[i].getName().compareTo(name) == 0){

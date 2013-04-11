@@ -128,6 +128,8 @@ public class DisplayPane extends JPanel {
             // Execute animation
             (new Animation(nodes)).start();
         }
+       MainApplet.updatePanel();
+    
     }
     
     // We need to avoid having nodes added to a list more than once
