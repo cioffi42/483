@@ -3,8 +3,6 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Arrays;
-
 import javax.swing.*;
 
 public class MainApplet extends JApplet {
@@ -82,13 +80,15 @@ public class MainApplet extends JApplet {
         sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
             @Override
             public void run() {
-            	String filename = "Velocity.html";
+            	String filename = "Velocity.htm";
                 sidePane.getBrowser().setUrl(path1+filename);
-                sidePane.getBrowser().execute("document.write(\"<!DOCTYPE html>\")");
+                
                 
             }
         });
-
+        
+        sidePane.clearPanel();
+        
         displayPane.setFocusNode(nodes[0], false);
 
         // This is for testing purposes only
@@ -97,66 +97,6 @@ public class MainApplet extends JApplet {
         for (String result : tests){
             System.out.println(result);
         }*/
-    }
-    public static void clearPanel(){
-    	
-    	
-    	sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-            	sidePane.getBrowser().execute("var y = document.getElementsByTagName(\"h1\")[0]; " +
-                		"while(y){ 	"+
-                		"    if(y.nodeName.toLowerCase() == \"p\"  ||  y.nodeName.toLowerCase() == \"h1\"  ){"+
-                				"y.style.display = 'none';" +
-                		"	}							  "+
-                		"    y = y.nextSibling;			  " +
-                		"}								  ");
-                
-            }
-        });
-    	
-    }
-    
-    public static void updatePanel (){
-    	
-    		clearPanel();
-    	
-    	
-    	sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                
-            	String nodeName = displayPane.getFocusNode().getName();
-            	
-            
-				   sidePane.getBrowser().execute(""+
-						   
-				  "var y = document.getElementsByTagName(\"h1\")[0];"+
-				  " var found = false;"+
-				  "while(y){ "+
-				  "   if(y.nodeName.toLowerCase() == \"h1\"   && y.textContent ==\""+nodeName+"\" && found == false){"+
-				  "       	   found = true;"+
-				  " 	   y.style.display = 'block';"+  
-				  "	}"+
-				  "    else if (found == true && y.nodeName.toLowerCase() == \"p\"){"+
-				   	 
-				  " 	   y.style.display = 'block';"+
-				  "        }"+
-				     
-				  "    else if (found == true && y.nodeName.toLowerCase() == \"h1\"){"+
-				  " 		break;"+
-				  "	}"+
-				  "    else{}"+
-				       
-				      
-				      " y = y.nextSibling;"+
-				   "}"+
-				   
-				   "");
-                
-            }
-        });
-    
     }
     
 	public static Node findNodeByName(String name){
@@ -168,4 +108,3 @@ public class MainApplet extends JApplet {
         return null;
     }
 }
-

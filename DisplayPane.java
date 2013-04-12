@@ -128,7 +128,7 @@ public class DisplayPane extends JPanel {
             // Execute animation
             (new Animation(nodes)).start();
         }
-       MainApplet.updatePanel();
+        MainApplet.sidePane.updatePanel();
     
     }
     

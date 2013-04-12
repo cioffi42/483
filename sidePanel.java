@@ -1,10 +1,4 @@
-import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Dimension;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.browser.Browser;
@@ -75,6 +69,62 @@ public class sidePanel extends Canvas {
 			}
 		}
 	}
+	
+	public void clearPanel(){
+        
+        getBrowser().getDisplay().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                getBrowser().execute("var y = document.getElementsByTagName(\"h1\")[0]; " +
+                        "while(y){ "+
+                        "    if(y.nodeName.toLowerCase() == \"p\"  ||  y.nodeName.toLowerCase() == \"h1\"  ){"+
+                                "y.style.display = 'none';" +
+                        "   }                             "+
+                        "    y = y.nextSibling;           " +
+                        "}                                ");
+                
+            }
+        });
+        
+        
+    }
+    
+    public void updatePanel (){
+        
+        clearPanel();
+        
+        getBrowser().getDisplay().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                
+                String nodeName = MainApplet.displayPane.getFocusNode().getName();
+                
+           
+                  getBrowser().execute(""+
+                           
+                  "var y = document.getElementsByTagName(\"h1\")[0];"+
+                  " var found = false;"+
+                  "while(y){ "+
+                  "   if(y.nodeName.toLowerCase() == \"h1\"   && (y.innerText || y.textContent) ==\""+nodeName+"\" && found == false){"+
+                  "            found = true;"+
+                  "        y.style.display = 'block';"+  
+                  " }"+
+                  "    else if (found == true && y.nodeName.toLowerCase() == \"p\"){"+
+                     
+                  "        y.style.display = 'block';"+
+                  "        }"+
+                     
+                  "    else if (found == true && y.nodeName.toLowerCase() == \"h1\"){"+
+                  "         break;"+
+                  "     }"+
+                      
+                      " y = y.nextSibling;"+
+                   "}"+
+                   
+                   "");
+            }
+        });
+    }
 
 	/**
 	 * Returns the Browser instance. Will return "null"
