@@ -23,7 +23,7 @@ public class MainApplet extends JApplet {
     public static Node[] nodes;
     public static Edge[] edges;
     public static String [] tags = {"Midterm 1","Midterm 2","Final"}; 
-    public static boolean initialize = false;
+  
     @Override
     public void init(){
     	
@@ -58,6 +58,8 @@ public class MainApplet extends JApplet {
         validate();
         mainPanel.setDividerLocation(DISPLAY_WIDTH);
         
+        
+        
         mainPanel.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, 
             new PropertyChangeListener(){
                 @Override
@@ -65,15 +67,14 @@ public class MainApplet extends JApplet {
                     validate();
                     // This code will be executed whenever the slider moves
                     displayPane.setFocusNode(displayPane.getFocusNode(), true);
-                    System.out.println("hello");
+                    
                     
                 }
             }
         );
         
         validate();
-        
-        
+
         sidePane.connect();
        
         
@@ -81,75 +82,15 @@ public class MainApplet extends JApplet {
         sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
             @Override
             public void run() {
-            	String filename = "VELOCITY.html";
+            	String filename = "Velocity.html";
                 sidePane.getBrowser().setUrl(path1+filename);
-                
-                
-            }
-        });
-     
-<<<<<<< HEAD
-        sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-            	sidePane.getBrowser().execute("var y = document.getElementsByTagName(\"h1\")[0]; " +
-                		"while(y){ 	"+
-                		"    if(y.nodeName.toLowerCase() == \"p\"  ||  y.nodeName.toLowerCase() == \"h1\"  ){"+
-                				"y.style.display = 'none';" +
-                		"	}							  "+
-                		"    y = y.nextSibling;			  " +
-                		"}								  ");
+                sidePane.getBrowser().execute("document.write(\"<!DOCTYPE html>\")");
                 
             }
         });
-        sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                
-            	String nodeName = "VELOCITY" ;
-    			
-				   sidePane.getBrowser().execute(""+
-						   
-				  "var y = document.getElementsByTagName(\"h1\")[0];"+
-				  " var found = false;"+
-				  "while(y){ "+
-				  "   if(y.nodeName.toLowerCase() == \"h1\"   && y.textContent ==\""+nodeName+"\" && found == false){"+
-				  "       	   found = true;"+
-				  " 	   y.style.display = 'block';"+  
-				  "	}"+
-				  "    else if (found == true && y.nodeName.toLowerCase() == \"p\"){"+
-				   	 
-				  " 	   y.style.display = 'block';"+
-				  "        }"+
-				     
-				  "    else if (found == true && y.nodeName.toLowerCase() == \"h1\"){"+
-				  " 		break;"+
-				  "	}"+
-				  "    else{}"+
-				       
-				      
-				      " y = y.nextSibling;"+
-				   "}"+
-				   
-				   "");
-                
-            }
-        });
-=======
-        clearPanel();
-        
-        
+
         displayPane.setFocusNode(nodes[0], false);
-        
-        
-       
-     
-        
-        
->>>>>>> new javascript changes and stuff
-        
-        
-        
+
         // This is for testing purposes only
         /*String[] tests = TestCode.tryAllGraphs();
         System.out.println("TESTS:");
@@ -173,7 +114,7 @@ public class MainApplet extends JApplet {
                 
             }
         });
-    	initialize = true;
+    	
     }
     
     public static void updatePanel (){
@@ -187,7 +128,7 @@ public class MainApplet extends JApplet {
                 
             	String nodeName = displayPane.getFocusNode().getName();
             	
-    			
+            
 				   sidePane.getBrowser().execute(""+
 						   
 				  "var y = document.getElementsByTagName(\"h1\")[0];"+
@@ -227,3 +168,4 @@ public class MainApplet extends JApplet {
         return null;
     }
 }
+
