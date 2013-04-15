@@ -77,15 +77,8 @@ public class MainApplet extends JApplet {
        
         
         final String path1 =  getCodeBase().toString();
-        sidePane.getBrowser().getDisplay().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-            	String filename = "Velocity.htm";
-                sidePane.getBrowser().setUrl(path1+filename);
-                
-                
-            }
-        });
+        sidePane.setFile(path1);
+
         
         sidePane.clearPanel();
         
