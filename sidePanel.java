@@ -34,7 +34,7 @@ public class sidePanel extends Canvas {
 
 						synchronized (this) {
 							swtBrowser = new Browser(shell, SWT.NONE);
-							swtBrowser.setUrl("http://www.google.com");
+							
 							shell.setFullScreen(true);
 							shell.pack();
 							this.notifyAll();
