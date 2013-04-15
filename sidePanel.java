@@ -70,6 +70,20 @@ public class sidePanel extends Canvas {
 		}
 	}
 	
+	public void setFile(final String path ){
+		
+	       getBrowser().getDisplay().asyncExec(new Runnable() {
+	            @Override
+	            public void run() {
+	            	String filename = "Velocity.htm";
+	                getBrowser().setUrl(path+filename);
+	                
+	                
+	            }
+	        });	
+	}
+	
+	
 	public void clearPanel(){
         
         getBrowser().getDisplay().asyncExec(new Runnable() {
