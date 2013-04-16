@@ -1,0 +1,79 @@
+Midterm 1
+Position
+Velocity
+Speed
+Acceleration
+Force
+Angular Position
+Angular Velocity
+Angular Acceleration
+Torque
+Lever Arm
+v = dx/dt
+Displacement
+a = dv/dt
+F = m a
+v_T = \omega x r
+a_T = \alpha x r
+\omega = d\theta/dt
+\alpha = d\omega/dt
+\tau = r x F
+F = dp/dt
+
+Midterm 2
+\tau = r x F
+Angular Position
+Angular Velocity
+a_T = \alpha x r
+\omega = d\theta/dt
+\alpha = d\omega/dt
+F = dp/dt
+Mechanical Energy
+Rotational Kinetic Energy
+Kinetic Energy
+Potential Energy
+Angular Momentum
+Momentum
+Moment of Inertia
+E = K + K_R + U
+Gravitational Potential Energy
+Elastic Potential Energy
+U = U_G + U_S
+L = r x p
+L = I \omega
+\tau = dL/dt
+K_R = L^2/2I
+
+Final
+U = U_G + U_S
+L = r x p
+L = I \omega
+\tau = dL/dt
+K_R = L^2/2I
+Normal Force
+Friction
+Prevents relative motion
+Resists relative motion
+Static friction
+Coefficient of static friction
+Kinetic Friction
+Coefficient of kinetic friction
+Gravitational Force
+Gravitational field strength
+Mass
+Impulse
+Momentum
+Elastic Force
+Spring constant
+Elastic Potential Energy
+Inverse Square Law
+f_k = \mu_k F_N
+Weight
+F_G = mg near Earth's surface
+Free-fall acceleration
+I = \Sigma mr^2 = \int r^2 dm
+J = \int F dt = F \Delta t
+J = \Delta p
+F_S = -k \Delta L
+U_S = (1/2) k \Delta L^2
+F_G = Gm_1 m_2/r^2
