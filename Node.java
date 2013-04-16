@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 // TODO: these getters/setters aren't doing anything, so either 
 // add something to them, or get rid of them
 
@@ -9,6 +11,8 @@ public class Node implements Comparable<Node>
     private Point center;
     private double weight;
     
+    public ArrayList<String> tags;
+    
     // This is used for animations
     public Point oldCenter;
     public Point newCenter;
@@ -18,6 +22,7 @@ public class Node implements Comparable<Node>
 	public Node(){
         this.id = this.name = this.description = null;
         this.weight = 0;
+        this.tags = new ArrayList<String>();
     }
     
     public Node(String id, String name, String description)
@@ -26,6 +31,7 @@ public class Node implements Comparable<Node>
         this.name = name;
         this.description = description;
         this.weight = 0;
+        this.tags = new ArrayList<String>();
     }
 	
 	public Point getCenter()

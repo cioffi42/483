@@ -2,6 +2,8 @@ import java.awt.Canvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -11,6 +13,7 @@ import org.eclipse.swt.widgets.Shell;
  * Add it to a AWT or Swing container and call "connect()" <b>after</b>
  * the container has been made visible.
  */
+@SuppressWarnings("serial")
 public class sidePanel extends Canvas {
 
 	private Thread swtThread;
@@ -35,11 +38,22 @@ public class sidePanel extends Canvas {
 						synchronized (this) {
 							swtBrowser = new Browser(shell, SWT.NONE);
 							
+							// Clear the browser using JavaScript when browser is loaded
+							swtBrowser.addProgressListener(new ProgressListener(){
+							    @Override
+                                public void completed(ProgressEvent event) {
+                                    clearPanel();
+                                }
+                                @Override
+                                public void changed(ProgressEvent event) {
+                                    
+                                }
+							});
+							
 							shell.setFullScreen(true);
 							shell.pack();
 							this.notifyAll();
 						}
-
 						shell.open();
 						while (!isInterrupted() && !shell.isDisposed()) {
 							if (!display.readAndDispatch()) {
@@ -47,9 +61,10 @@ public class sidePanel extends Canvas {
 							}
 						}
 						shell.dispose();
-						display.dispose();
+						// display.dispose(); // Removing this line stops the crashing issue?
 					} catch (Exception e) {
-						interrupt();
+						e.printStackTrace();
+					    interrupt();
 					}
 				}
 			};
@@ -71,18 +86,14 @@ public class sidePanel extends Canvas {
 	}
 	
 	public void setFile(final String path ){
-		
-	       getBrowser().getDisplay().asyncExec(new Runnable() {
-	            @Override
-	            public void run() {
-	            	String filename = "Velocity.htm";
-	                getBrowser().setUrl(path+filename);
-	                
-	                
-	            }
-	        });	
+
+	    getBrowser().getDisplay().asyncExec(new Runnable() {
+	        @Override
+	        public void run() {
+	            getBrowser().setUrl(path);
+	        }
+	    }); 
 	}
-	
 	
 	public void clearPanel(){
         
@@ -111,7 +122,7 @@ public class sidePanel extends Canvas {
             @Override
             public void run() {
                 
-                String nodeName = MainApplet.displayPane.getFocusNode().getName();
+                String nodeName = MainPanel.displayPane.getFocusNode().getName();
                 
            
                   getBrowser().execute(""+

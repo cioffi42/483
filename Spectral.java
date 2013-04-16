@@ -11,8 +11,8 @@ public class Spectral {
         
         Graph graph = new Graph(nodes, edges);
         
-        int width = MainApplet.displayPane.getWidth();
-        int height = MainApplet.displayPane.getHeight();
+        int width = MainPanel.displayPane.getWidth();
+        int height = MainPanel.displayPane.getHeight();
         
         // If there are 2 or fewer nodes, then don't run Spectral algorithm
         if (nodes.length == 1){

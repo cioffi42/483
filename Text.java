@@ -32,7 +32,7 @@ public class Text {
         return sb.toString();
     }
     
-    public static AttributedString applyStringStyles(String text){
+    public static AttributedString applyStringStyles(String text, int fontSize){
         StringBuilder sb = new StringBuilder();
         ArrayList<Integer[]> subscripts = new ArrayList<Integer[]>();
         ArrayList<Integer[]> superscripts = new ArrayList<Integer[]>();
@@ -78,7 +78,7 @@ public class Text {
         
         // Finally, give the AttributedString the right font
         result.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
-        result.addAttribute(TextAttribute.SIZE, new Float(14.0f));
+        result.addAttribute(TextAttribute.SIZE, new Float(fontSize));
         
         return result;
     }

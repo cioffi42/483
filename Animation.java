@@ -22,7 +22,7 @@ public class Animation extends Thread {
                     node.getCenter().x = node.oldCenter.x*(1.0 - i/numFrames) + node.newCenter.x*(i/numFrames);
                     node.getCenter().y = node.oldCenter.y*(1.0 - i/numFrames) + node.newCenter.y*(i/numFrames);
                 }
-                MainApplet.displayPane.repaint();
+                MainPanel.displayPane.repaint();
                 sleep((int)(1000.0*ANIMATION_LENGTH/numFrames));
             }
             isRunning = false;

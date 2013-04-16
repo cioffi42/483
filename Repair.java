@@ -10,18 +10,6 @@ public class Repair {
             // Start tweaking the nodes to improve the graph's Rating
             moveAllNodes(graph, SMALL_INCREMENT);
         }
-        
-        // If the graph is still bad, then we need to keep repairing
-        if (new Rating(graph).isUnacceptable()){
-            // TODO: work on next level of repair
-            
-            // TODO: This is probably temporary
-            double scalar = 1.0 / new Rating(graph).overallRating;
-            if (scalar > 1.1 && scalar < 3.0){
-                //System.out.printf("Scaling graph by factor of %.3f\n", scalar);
-                //graph.setBorder(scalar, scalar);
-            }
-        }
     }
     
     private static void moveAllNodes(Graph graph, int increment){
@@ -61,9 +49,5 @@ public class Repair {
             return false;
         }
         return true;
-    }
-    
-    private static void cleanup(Graph graph){
-        
     }
 }

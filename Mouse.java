@@ -15,7 +15,7 @@ public class Mouse extends MouseInputAdapter {
 
     @Override
     public void mousePressed(MouseEvent event){
-        Node node = MainApplet.displayPane.getMouseNode(event.getX(), event.getY());
+        Node node = MainPanel.displayPane.getMouseNode(event.getX(), event.getY());
         if (node != null){
             // User pressed mouse button down on a node
             targetNode = node;
@@ -34,7 +34,7 @@ public class Mouse extends MouseInputAdapter {
             curY = event.getY();
             targetNode.getCenter().x += (curX - prevX);
             targetNode.getCenter().y += (curY - prevY);
-            MainApplet.displayPane.repaint();
+            MainPanel.displayPane.repaint();
         }
     }
 
@@ -48,9 +48,9 @@ public class Mouse extends MouseInputAdapter {
             boolean isClick = (distance < 1.0 || (distance < 40.0 && timeElapsedMillisecs < 100));
             //System.out.println(distance + "\n" + timeElapsedMillisecs);
             if (isClick) {
-                if (targetNode != MainApplet.displayPane.getFocusNode()) {
+                if (targetNode != MainPanel.displayPane.getFocusNode()) {
                     // User clicked on a node, so set the focus node
-                    MainApplet.displayPane.setFocusNode(targetNode, true);
+                    MainPanel.displayPane.setFocusNode(targetNode, true);
                 }
             }
         }
@@ -60,13 +60,13 @@ public class Mouse extends MouseInputAdapter {
 
     @Override
     public void mouseMoved(MouseEvent event){
-        Node node = MainApplet.displayPane.getMouseNode(event.getX(), event.getY());
+        Node node = MainPanel.displayPane.getMouseNode(event.getX(), event.getY());
         int cursor = (node != null) ? Cursor.HAND_CURSOR : Cursor.DEFAULT_CURSOR;
-        MainApplet.displayPane.setCursor(Cursor.getPredefinedCursor(cursor));
+        MainPanel.displayPane.setCursor(Cursor.getPredefinedCursor(cursor));
         if (DisplayPane.hoverNode != node) {
             // We need to update the hover node (which can be null)
             DisplayPane.hoverNode = node;
-            MainApplet.displayPane.repaint();
+            MainPanel.displayPane.repaint();
         }
     }
 }

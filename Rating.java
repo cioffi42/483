@@ -55,8 +55,8 @@ public class Rating {
             Node node = graph.nodes[i];
             
             // check node-wall distances
-            int width = MainApplet.displayPane.getWidth();
-            int height = MainApplet.displayPane.getHeight();
+            int width = MainPanel.displayPane.getWidth();
+            int height = MainPanel.displayPane.getHeight();
             Point point = node.getCenter();
             double distance = MathUtils.min(point.x, width-point.x, point.y, height-point.y);
             if (distance < worstDistances[Category.NTW.index]){

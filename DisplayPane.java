@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.text.AttributedString;
 import java.util.*;
@@ -28,8 +27,6 @@ public class DisplayPane extends JPanel {
     private static BufferedImage focusNodeImage;
     private static BufferedImage hoverNodeImage;
     
-    private Graphics bufferGraphics;
-    private Image bufferImage;
     private static int imgHeight;
     private static int imgWidth;
     
@@ -61,7 +58,7 @@ public class DisplayPane extends JPanel {
     	}
     	catch (IOException e)
     	{
-    		//handle exception
+    		e.printStackTrace();
     	}
     }
     
@@ -95,11 +92,11 @@ public class DisplayPane extends JPanel {
         
         List<Edge> newEdges = new ArrayList<Edge>();
         
-        for (int i = 0; i < MainApplet.edges.length; i++)
+        for (int i = 0; i < MainPanel.edges.length; i++)
         {
-            if (MainApplet.edges[i].includesNodes(nodes))
+            if (MainPanel.edges[i].includesNodes(nodes))
             {
-                newEdges.add(MainApplet.edges[i]);
+                newEdges.add(MainPanel.edges[i]);
             }
         }
         Edge[] usedEdges = new Edge[newEdges.size()];
@@ -127,8 +124,10 @@ public class DisplayPane extends JPanel {
             }
             // Execute animation
             (new Animation(nodes)).start();
+        } else {
+            repaint();
         }
-        MainApplet.sidePane.updatePanel();
+        MainPanel.sidePane.updatePanel();
     
     }
     
@@ -195,9 +194,9 @@ public class DisplayPane extends JPanel {
     //Returns the nodes that will be displayed with a given focus node
     public static Node[] determineNodes(Node focus)
     {
-    	Node[] oldNodes = MainApplet.nodes;
+    	Node[] oldNodes = MainPanel.nodes;
     	Node[] usedNodes;
-    	Edge[] oldEdges = MainApplet.edges;
+    	Edge[] oldEdges = MainPanel.edges;
     	List<Node> newNodes = new ArrayList<Node>();
     	Node temp;
     	double weight;
@@ -317,17 +316,30 @@ public class DisplayPane extends JPanel {
     
     private static final int MAX_STRING_WIDTH = 150;
     private static final int MAX_STRING_WIDTH_TWO_LINES = 135;
+    private static final int NORMAL_FONT_SIZE = 14;
+    private static final int MIN_FONT_SIZE = 8;
     
     private void drawText(Graphics2D g2, String name, double xCenter, double yCenter){
+        for (int fontSize = NORMAL_FONT_SIZE; fontSize >= MIN_FONT_SIZE; fontSize -= 2){
+            boolean success = tryToDrawText(g2, name, xCenter, yCenter, fontSize);
+            if (success){
+                return;
+            }
+        }
+        // If the text is too long to fit using the minimum font size, 
+        // then don't draw anything.
+    }
+    
+    private boolean tryToDrawText(Graphics2D g2, String name, double xCenter, double yCenter, int fontSize){
         int x, y;
         
         // Set the font
         g2.setColor(DEFAULT_NODE_COLOR);
-        Font font = new Font(g2.getFont().getFamily(), Font.BOLD, 14);
+        Font font = new Font(g2.getFont().getFamily(), Font.BOLD, fontSize);
         g2.setFont(font);
         
         // Create the attributed string (which handles subscripts/superscripts)
-        AttributedString attributedName = Text.applyStringStyles(name);
+        AttributedString attributedName = Text.applyStringStyles(name, fontSize);
         int length = attributedName.getIterator().getEndIndex();
         
         // Get the dimensions of the string
@@ -357,6 +369,7 @@ public class DisplayPane extends JPanel {
                 }
             }
             if (twoLines != null){
+                // We have found a valid way to split the text into two lines, so draw it
                 int firstAsLength = twoLines[0].getIterator().getEndIndex();
                 int firstWidth = (int)metrics.getStringBounds(twoLines[0].getIterator(), 0, firstAsLength, g2).getWidth();
                 x = (int)(xCenter - 0.5*firstWidth);
@@ -367,63 +380,40 @@ public class DisplayPane extends JPanel {
                 x = (int)(xCenter - 0.5*secondWidth);
                 y = (int)(yCenter + 0.8*height);
                 g2.drawString(twoLines[1].getIterator(), x, y);
+            } else {
+                // We tried everything and the text didn't fit!
+                return false;
             }
         }
+        // We successfully drew the text!
+        return true;
     }
     
     // Tries to split the given string at the splitIndex into two AttributedString objects that fit in the node.
     // Returns array of two AttributedString objects if successful, null if it couldn't fit.
     private AttributedString[] splitTextTwoLines(FontMetrics metrics, Graphics2D g2, String name, int splitIndex){
-        AttributedString firstAs = Text.applyStringStyles(name.substring(0, splitIndex+1));
+        
+        int fontSize = metrics.getFont().getSize();
+        
+        // Get the first of two lines
+        AttributedString firstAs = Text.applyStringStyles(name.substring(0, splitIndex+1), fontSize);
         int firstAsLength = firstAs.getIterator().getEndIndex();
         int firstWidth = (int)metrics.getStringBounds(firstAs.getIterator(), 0, firstAsLength, g2).getWidth();
+        // If the first line is short enough
         if (firstWidth < MAX_STRING_WIDTH_TWO_LINES){
-            AttributedString secondAs = Text.applyStringStyles(name.substring(splitIndex+1));
-            AttributedString[] twoLines = {firstAs, secondAs};
-            return twoLines;
+            // Get the second of two lines
+            AttributedString secondAs = Text.applyStringStyles(name.substring(splitIndex+1), fontSize);
+            int secondAsLength = secondAs.getIterator().getEndIndex();
+            int secondWidth = (int)metrics.getStringBounds(secondAs.getIterator(), 0, secondAsLength, g2).getWidth();
+            // If the second line is short enough
+            if (secondWidth < MAX_STRING_WIDTH_TWO_LINES){
+                // Return the two lines
+                AttributedString[] twoLines = {firstAs, secondAs};
+                return twoLines;
+            }
         }
+        // If either line is too long, then return null
         return null;
-    }
-    
-    //problem when using a node.getName() that is NULL, error check for this
-    //need to manage it so words don't get cut in half by a new line
-    //not centered correctly
-    private void drawText2(Graphics g, String name, double xCenter, double yCenter)
-    {
-        int length = name.length();
-		int nRows = length/15 + 1;     //15 in constant here, should be variable
-		int rLength = length/nRows;
-		ArrayList<String> substrings = new ArrayList<String>();
-		int nextStartIndex=0;
-		
-		for (int i = 0; i < nRows; i++) 
-		{
-			int thisrLength = rLength;
-			String substring = new String();
-			
-			if (i == (nRows/2 + 1)) 
-				thisrLength += length % nRows;			
-			if (i != (nRows - 1)) 
-				substring = name.substring(nextStartIndex, nextStartIndex + thisrLength);
-			else substring = name.substring(nextStartIndex);
-		
-			substrings.add(substring);
-			nextStartIndex += thisrLength;
-		}
-		
-		g.setColor(DEFAULT_NODE_COLOR);
-		g.setFont(new Font(g.getFont().getFamily(), Font.BOLD, 14));
-		for (int i = 0; i < nRows; i++) 
-		{
-		    int rowheight = imgHeight/(nRows + 1);
-			int rowposition = (int)yCenter - imgHeight/2 + rowheight*(i + 1) + 3;				//added plus 3 for offset, possibly from font size, hater's go'n hate
-			g.drawString(substrings.get(i), (int)xCenter - (int)(length*1.6), rowposition); 	//was expecting length/2 but *1.6 did the trick o.O, what am i missing?
-																								//this will have toe change everytime we change font size
-    	}   	    	
-    }
-
-    public void update(Graphics g){
-    	paint(g);
     }
     
     public void setOffset(int newOffsetX, int newOffsetY){
@@ -436,11 +426,14 @@ public class DisplayPane extends JPanel {
     }
     
     public Node getMouseNode(int x, int y){
-        for (Node node : graph.nodes){
-            double scaledX = (x - (node.getCenter().getX()-offsetX)) / (0.9*imgWidth/2);
-            double scaledY = (y - (node.getCenter().getY()-offsetY)) / (0.8*imgHeight/2);
-            if (scaledX*scaledX + scaledY*scaledY <= 1.0){
-                return node;
+        if (graph != null) {
+            for (int i = graph.nodes.length-1; i >= 0; i--) {
+                Node node = graph.nodes[i];
+                double scaledX = (x - (node.getCenter().getX() - offsetX)) / (0.9 * imgWidth / 2);
+                double scaledY = (y - (node.getCenter().getY() - offsetY)) / (0.8 * imgHeight / 2);
+                if (scaledX * scaledX + scaledY * scaledY <= 1.0) {
+                    return node;
+                }
             }
         }
         return null;

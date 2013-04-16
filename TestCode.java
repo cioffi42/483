@@ -12,14 +12,14 @@ public class TestCode {
     }
     
     public static void testNodeDeterminer(){
-        nodes = DisplayPane.determineNodes(MainApplet.nodes[0]);
+        nodes = DisplayPane.determineNodes(MainPanel.nodes[0]);
         List<Edge> newEdges = new ArrayList<Edge>();
         
-        for (int i = 0; i < MainApplet.edges.length; i++)
+        for (int i = 0; i < MainPanel.edges.length; i++)
         {
-            if (MainApplet.edges[i].includesNodes(nodes))
+            if (MainPanel.edges[i].includesNodes(nodes))
         	{
-        		newEdges.add(MainApplet.edges[i]);
+        		newEdges.add(MainPanel.edges[i]);
         	}
         }
         Edge[] usedEdges = new Edge[newEdges.size()];
@@ -31,15 +31,15 @@ public class TestCode {
     	Repair.repair(graph);
         printGraph(graph);
         
-        MainApplet.displayPane.setGraph(graph);
+        MainPanel.displayPane.setGraph(graph);
     }
     
     public static String[] tryAllGraphs(){
-        String[] results = new String[MainApplet.nodes.length];
-        for (int i=0; i<MainApplet.nodes.length; i++){
-            Node node = MainApplet.nodes[i];
-            MainApplet.displayPane.setFocusNode(node, false);
-            double rating = new Rating(MainApplet.displayPane.getGraph()).overallRating;
+        String[] results = new String[MainPanel.nodes.length];
+        for (int i=0; i<MainPanel.nodes.length; i++){
+            Node node = MainPanel.nodes[i];
+            MainPanel.displayPane.setFocusNode(node, false);
+            double rating = new Rating(MainPanel.displayPane.getGraph()).overallRating;
             results[i] = String.format("%.3f", rating) + ": " + node.getName();
         }
         Arrays.sort(results);
@@ -71,7 +71,7 @@ public class TestCode {
         Repair.repair(graph);
         printGraph(graph);
         
-        MainApplet.displayPane.setGraph(graph);
+        MainPanel.displayPane.setGraph(graph);
     }
     
     public static void printGraph(Graph graph){
@@ -108,8 +108,8 @@ public class TestCode {
     }
     
     public static void setRandomGraph(Graph graph){
-        int width = MainApplet.displayPane.getWidth();
-        int height = MainApplet.displayPane.getHeight();
+        int width = MainPanel.displayPane.getWidth();
+        int height = MainPanel.displayPane.getHeight();
         for (Node node : graph.nodes){
             node.setCenter(new Point(Math.random()*width, Math.random()*height));
         }

@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,6 +8,7 @@ import java.util.Scanner;
 public class Parser {
     
     private static final String EDGES_FILENAME = "relationships.csv";
+    private static final String TAGS_FILENAME = "tags.txt";
     
     // Given a String "Speed,0.6,1,Velocity", this returns a 
     // String array {"Speed", "0.6", "1", "Velocity"}
@@ -54,45 +56,90 @@ public class Parser {
         return entries;
     }
     
-	public static void parse(){
-		
-		ArrayList<Node> nodes = new ArrayList<Node>();
-		ArrayList<Edge> edges = new ArrayList<Edge>();
-		
+    public static void parse(){
+        // First we parse csv file that lists the edges
+        parseEdgesCSV();
+        // Now we parse the text file that lists the tags (optional)
+        parseTags();
+    }
+    
+    private static void parseEdgesCSV(){
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        ArrayList<Edge> edges = new ArrayList<Edge>();
+        
+        try {
+            Scanner sc = new Scanner(new FileReader(EDGES_FILENAME));
+            sc.nextLine(); // skip first line
+            while (sc.hasNextLine()){
+                String line = sc.nextLine();
+                String[] entries = splitRow(line);
+                entries[0] = Text.applyUnicodeCharacters(entries[0]);
+                entries[3] = Text.applyUnicodeCharacters(entries[3]);
+                Node nodeA = search(nodes, entries[0]);
+                if (nodeA == null){
+                    nodeA = new Node("", entries[0], "");
+                    nodes.add(nodeA);
+                }
+                Node nodeB = search(nodes, entries[3]);
+                if (nodeB == null){
+                    nodeB = new Node("", entries[3], "");
+                    nodes.add(nodeB);
+                }
+                edges.add(new Edge(Double.parseDouble(entries[2]), Double.parseDouble(entries[1]), nodeA, nodeB));
+            }
+            
+            MainPanel.allNodes = new Node[nodes.size()];
+            for (int i=0; i<MainPanel.allNodes.length; i++){
+                MainPanel.allNodes[i] = nodes.get(i);
+            }
+            MainPanel.allEdges = new Edge[edges.size()];
+            for (int i=0; i<MainPanel.allEdges.length; i++){
+                MainPanel.allEdges[i] = edges.get(i);
+            }
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+	private static void parseTags(){
 		try {
-			Scanner sc = new Scanner(new FileReader(EDGES_FILENAME));
-			sc.nextLine(); // skip first line
-			while (sc.hasNextLine()){
-				String line = sc.nextLine();
-				String[] entries = splitRow(line);
-				entries[0] = Text.applyUnicodeCharacters(entries[0]);
-				entries[3] = Text.applyUnicodeCharacters(entries[3]);
-				Node nodeA = search(nodes, entries[0]);
-				if (nodeA == null){
-					nodeA = new Node("", entries[0], "");
-					nodes.add(nodeA);
-				}
-				Node nodeB = search(nodes, entries[3]);
-				if (nodeB == null){
-					nodeB = new Node("", entries[3], "");
-					nodes.add(nodeB);
-				}
-				edges.add(new Edge(Double.parseDouble(entries[2]), Double.parseDouble(entries[1]), nodeA, nodeB));
-			}
-			
-			MainApplet.nodes = new Node[nodes.size()];
-			for (int i=0; i<MainApplet.nodes.length; i++){
-				MainApplet.nodes[i] = nodes.get(i);
-			}
-			MainApplet.edges = new Edge[edges.size()];
-			for (int i=0; i<MainApplet.edges.length; i++){
-				MainApplet.edges[i] = edges.get(i);
-			}
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+		    ArrayList<String> tags = new ArrayList<String>();
+            Scanner sc = new Scanner(new FileReader(TAGS_FILENAME));
+            String currentTag = null;
+            boolean currentTagIsUsed = false;
+            while (sc.hasNextLine()){
+                String line = sc.nextLine();
+                if (!line.trim().isEmpty()){
+                    if (currentTag == null){
+                        // This line is the name of a tag
+                        currentTag = line;
+                        currentTagIsUsed = false;
+                    } else {
+                        // This line is the name of a node
+                        String nodeName = Text.applyUnicodeCharacters(line);
+                        Node node = MainPanel.findNodeByName(nodeName);
+                        if (node != null){
+                            node.tags.add(currentTag);
+                            if (!currentTagIsUsed){
+                                tags.add(currentTag);
+                                currentTagIsUsed = true;
+                            }
+                        }
+                    }
+                } else {
+                    // This line is empty, so we're starting a new block of text
+                    currentTag = null;
+                }
+            }
+            MainPanel.tags = new String[tags.size()];
+            for (int i=0; i<MainPanel.tags.length; i++){
+                MainPanel.tags[i] = tags.get(i);
+            }
+        } catch (FileNotFoundException e) {
+            // Optional tags file not found, this is NOT an error
+        } 
 	}
 	
 	public static Node search(ArrayList<Node> list, String name){
