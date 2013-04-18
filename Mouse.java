@@ -12,6 +12,8 @@ public class Mouse extends MouseInputAdapter {
     private Node targetNode = null;
 
     private Date dragStartTime = null;
+    
+    private boolean isDragged = false;
 
     @Override
     public void mousePressed(MouseEvent event){
@@ -20,14 +22,17 @@ public class Mouse extends MouseInputAdapter {
             // User pressed mouse button down on a node
             targetNode = node;
             dragStartTime = new Date();
-            startX = curX = prevX = event.getX();
-            startY = curY = prevY = event.getY();
+            if (event.getButton() == MouseEvent.BUTTON1) {
+            	isDragged = true;
+            }
+			startX = curX = prevX = event.getX();
+			startY = curY = prevY = event.getY();
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent event){
-        if (targetNode != null){
+        if (targetNode != null && dragStartTime != null && isDragged){
             prevX = curX;
             prevY = curY;
             curX = event.getX();
@@ -48,9 +53,14 @@ public class Mouse extends MouseInputAdapter {
             boolean isClick = (distance < 1.0 || (distance < 40.0 && timeElapsedMillisecs < 100));
             //System.out.println(distance + "\n" + timeElapsedMillisecs);
             if (isClick) {
-                if (targetNode != MainPanel.displayPane.getFocusNode()) {
-                    // User clicked on a node, so set the focus node
-                    MainPanel.displayPane.setFocusNode(targetNode, true);
+                if (event.getButton() == MouseEvent.BUTTON1) {
+					if (targetNode != MainPanel.displayPane.getFocusNode()) {
+						// User clicked on a node, so set the focus node
+						MainPanel.displayPane.setFocusNode(targetNode, true);
+					}
+				}
+				if (event.getButton() == MouseEvent.BUTTON3){
+                	MainPanel.sidePane.updatePanel(targetNode);
                 }
             }
         }

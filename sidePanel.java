@@ -42,7 +42,7 @@ public class sidePanel extends Canvas {
 							swtBrowser.addProgressListener(new ProgressListener(){
 							    @Override
                                 public void completed(ProgressEvent event) {
-                                    clearPanel();
+                                    updatePanel();
                                 }
                                 @Override
                                 public void changed(ProgressEvent event) {
@@ -113,8 +113,12 @@ public class sidePanel extends Canvas {
         
         
     }
+	
+	public void updatePanel (){
+		updatePanel(MainPanel.displayPane.getFocusNode());
+	}
     
-    public void updatePanel (){
+    public void updatePanel (final Node node){
         
         clearPanel();
         
@@ -122,7 +126,7 @@ public class sidePanel extends Canvas {
             @Override
             public void run() {
                 
-                String nodeName = MainPanel.displayPane.getFocusNode().getName();
+                String nodeName = node.getName();
                 
            
                   getBrowser().execute(""+
