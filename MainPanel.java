@@ -11,6 +11,8 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel {
     
+    private static final String APP_TITLE = "Concept Map";
+    
     private static final int WIDTH = 1200;
     private static final int HEIGHT = 600;
     
@@ -38,6 +40,7 @@ public class MainPanel extends JPanel {
         JFrame app = new JFrame();
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setSize(WIDTH, HEIGHT);
+        app.setTitle(APP_TITLE);
         MainPanel panel = new MainPanel();
         app.add(panel);
         app.setVisible(true);

@@ -144,9 +144,10 @@ public class Parser {
 	
 	public static Node search(ArrayList<Node> list, String name){
 		Iterator<Node> it = list.iterator();
+		name = name.toLowerCase();
 		while (it.hasNext()){
 			Node node = it.next();
-			if (node.getName().compareTo(name) == 0){
+			if (node.getName().toLowerCase().compareTo(name) == 0){
 				return node;
 			}
 		}
